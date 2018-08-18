@@ -27,21 +27,25 @@ class MyCommands{
     }
 }
 ~~~
-The `Arguments` will contain the information given by the player, but can already be processed.
-For example can a **string** already be converted to a **int** when thats expected.
-
-The order of the Arguments is the same as the player will have to enter it ingame.
-When **true** is returned the command is executed succesfull, if not the usage as specefied in the **plugin.yml** is displayed.
+The `Arguments` will contain the information given by the player, can already be converted to the right datatypes so the command methode can focus on the logic of the command.
 
 When a Methode has the `@PluginCommand` Annotation but doesnt match one of the other requirements a exception is thrown by `CommandManager.manage()`.
 
+### @PluginCommand
+The Annotation `@PluginCommand` marks methodes that are executing a command, but they also have optional parameters:
+
 ## Arguments
 Arguments are used to specefie what arguments are accepted by a command as well manage autocomplete.
+They can also refine the inputs of the player by converting them into difrent datatypes.
 
-### run()
-The `Argument run(String s)` mehtode is used to determine if a argument entered by the player is a valid argumend for the command.
+The two methodes of Argument are `run()` and `tab()`:
+
+### run(String[] args)
+The `run(String s)` mehtode is used to determine if a argument entered by the player is a valid argumend for the command.
 When a command is entered the arguments entered by the player are given to the `run()` mehtode of the classes and its return value is then passed down to the command methode.
 When **null** is returned the argument entered by the player is invalid and the usage as specefied in the **plugin.yml** is displayed.
 
-### tap()
-The `tap(CommandSender sender, String[] args)` methode ist used for auto complete. the list returned by it is circled through when the player hits tap.
+### tab(CommandSender sender , String args)
+The `tab(CommandSender sender, String[] args)` methode ist used for auto complete. the list returned by it is circled through when the player hits tab.
+
+
