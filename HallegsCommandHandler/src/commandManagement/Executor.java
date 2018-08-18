@@ -10,15 +10,28 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
+
+import commandManagement.CommandManager.PluginCommand;
+import net.md_5.bungee.api.ChatColor;
 
 public class Executor implements CommandExecutor, TabCompleter {
 	private Method methode;
 	private List<Argument> arguments;
+	private String permission;
+	private boolean opOnly;
+	private boolean playerOnly;
 
 	public Executor(Method m) throws Exception {
 		this.methode = m;
 		this.arguments = new ArrayList<>();
-		if (m.getParameterTypes()[0] != CommandSender.class) {
+		this.opOnly = m.getAnnotation(PluginCommand.class).opOnly();
+		this.permission = m.getAnnotation(PluginCommand.class).permission();
+
+		this.playerOnly = false;
+		if (m.getParameterTypes()[0] == Player.class) {
+			this.playerOnly = true;
+		} else if (m.getParameterTypes()[0] != CommandSender.class) {
 			throw new Exception("The methode " + m.getName()
 					+ " has PluginCommand Anatation but has no CommandSender as first Parameter.");
 		}
@@ -31,7 +44,7 @@ public class Executor implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	private List<Argument> getParameter(String[] args) {
+	private List<Argument> getParameter(CommandSender sender, String[] args) {
 		if (args.length != this.arguments.size()) {
 			return null;
 		}
@@ -39,7 +52,7 @@ public class Executor implements CommandExecutor, TabCompleter {
 		List<Argument> ret = new LinkedList<>();
 
 		for (int i = 0; i < args.length; i++) {
-			Argument a = this.arguments.get(i).run(args[i]);
+			Argument a = this.arguments.get(i).run(sender, args[i]);
 			if (a != null) {
 				ret.add(a);
 			} else {
@@ -53,7 +66,18 @@ public class Executor implements CommandExecutor, TabCompleter {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		try {
-			List<Argument> ret = getParameter(args);
+
+			if (this.opOnly && !sender.isOp() || (!this.permission.isEmpty() && !sender
+					.hasPermission(this.permission))) {
+				sender.sendMessage(ChatColor.RED + "You do not have permission to do that!");
+				return true;
+			}
+			if (this.playerOnly && !(sender instanceof Player)) {
+				sender.sendMessage("You have to be a player to use this command!");
+				return true;
+			}
+
+			List<Argument> ret = getParameter(sender, args);
 
 			if (ret == null) {
 				return false;
@@ -65,7 +89,8 @@ public class Executor implements CommandExecutor, TabCompleter {
 				obj[1] = ret.get(i - 1);
 			}
 
-			return (boolean) this.methode.invoke(null, obj);
+			this.methode.invoke(null, obj);
+			return true;
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 		}

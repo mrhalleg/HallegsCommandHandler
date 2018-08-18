@@ -13,7 +13,7 @@ public class StringArgument extends Argument {
 	}
 
 	@Override
-	public Argument run(String string) {
+	public Argument run(Object sender, String string) {
 		return new StringArgument();
 	}
 

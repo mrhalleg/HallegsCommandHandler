@@ -11,23 +11,25 @@ import java.lang.reflect.Modifier;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandManager {
-	public static void manage(Class<?> c, JavaPlugin plugin) throws Exception {
-		Method[] meth = c.getMethods();
-		for (Method m : meth) {
+	public static void manage(JavaPlugin plugin, Class<?>... classes) throws Exception {
+		for (Class<?> c : classes) {
+			Method[] meth = c.getMethods();
+			for (Method m : meth) {
 
-			for (Annotation a : m.getAnnotations()) {
-				if (a.annotationType() == PluginCommand.class) {
-					if (!Modifier.isStatic(m.getModifiers())) {
-						throw new Exception("The methode " + m.getName()
-								+ " has PluginCommand Anatation but is not static.");
-					}
-					if (m.getReturnType() != boolean.class) {
-						throw new Exception("The methode " + m.getName()
-								+ " has PluginCommand Anatation but does not return a boolean value.");
-					} else {
-						plugin.getCommand(m.getName()).setExecutor(new Executor(m));
-					}
+				for (Annotation a : m.getAnnotations()) {
+					if (a.annotationType() == PluginCommand.class) {
+						if (!Modifier.isStatic(m.getModifiers())) {
+							throw new Exception("The methode " + m.getName()
+									+ " has PluginCommand Annotation but is not static.");
+						}
+						if (m.getReturnType() != boolean.class) {
+							throw new Exception("The methode " + m.getName()
+									+ " has PluginCommand Annotation but does not return a boolean value.");
+						} else {
+							plugin.getCommand(m.getName()).setExecutor(new Executor(m));
+						}
 
+					}
 				}
 			}
 		}
@@ -36,5 +38,8 @@ public class CommandManager {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	public @interface PluginCommand {
+		boolean opOnly() default true;
+
+		String permission() default "";
 	}
 }

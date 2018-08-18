@@ -13,7 +13,7 @@ public abstract class Argument {
 		return new ArrayList<>();
 	}
 
-	public Argument run(String string) {
+	public Argument run(Object sender, String string) {
 		return null;
 	}
 }
