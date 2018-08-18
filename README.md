@@ -1,6 +1,5 @@
-# HallegsCommandHandler
-A Libary to manage commands for Minecraft Spigot Plugins.
 
+<<<<<<< HEAD
 # How to use:
 To begin you need to call `manage(JavaPlugin p, Class<?>... c)` of `CommandManager` in your `onEnable()` method.
 The first Argument is just the JavaPlugin, while the later ones are used to hold the methodes for the Commands:
@@ -49,3 +48,5 @@ When **null** is returned the argument entered by the player is invalid and the 
 The `tab(CommandSender sender, String[] args)` methode ist used for auto complete. the list returned by it is circled through when the player hits tab.
 
 
+=======
+>>>>>>> 09a35060342e7ee0286eb09ee83f7f1db77e31da
