@@ -1,0 +1,6 @@
+name: TestPluginCommandHandler
+version: 0.1.0
+main: plugin.TestPlugin
+commands:
+  test:
+    
