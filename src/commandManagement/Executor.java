@@ -30,7 +30,7 @@ public class Executor {
 		this.opOnly = m.getAnnotation(PluginCommand.class).opOnly();
 		this.permission = m.getAnnotation(PluginCommand.class).permission();
 
-		// determine playerOnly value by return type of method
+		// determine playerOnly value by type of first Argument
 		this.playerOnly = false;
 		if (m.getParameterTypes()[0] == Player.class) {
 			this.playerOnly = true;

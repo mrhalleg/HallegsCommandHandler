@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import arguments.ConstStringArgument;
@@ -28,25 +29,30 @@ public class CommandManager {
 			StringArgument.class };
 
 	public static void manage(JavaPlugin plugin, Class<?>[] commandClasses,
-			Class<Argument>[] argumentClasses) throws Exception {
+			Class<?>[] argumentClasses) throws Exception {
 
 		List<Class> classes = new LinkedList<>();
-		classes.addAll(Arrays.asList(argumentClasses));
 		classes.addAll(Arrays.asList(standardArgumentClasses));
+		classes.addAll(Arrays.asList(argumentClasses));
 
 		// load default argument classes
+		defaultArgumentClasses = new HashMap<>();
 		for (Class c : classes) {
-
+			defaultArgumentClasses.put(getArgumentType(c), c);
 		}
 
 		Map<String, Commander> exes = new HashMap<>();
 		// load commandClasses and command methods in them
 		for (Class c : commandClasses) {
+			plugin.getLogger().info("loading command class " + c.getName());
 			Method[] meth = c.getMethods();
 			for (Method m : meth) {
+
 				if (m.getAnnotation(PluginCommand.class) == null) {
 					continue;
 				}
+				plugin.getLogger().info("loading command method " + m.getName());
+
 				if (!Modifier.isStatic(m.getModifiers())) {
 					throw new Exception("The methode " + m.getName()
 							+ " has PluginCommand Annotation but is not static.");
@@ -64,6 +70,16 @@ public class CommandManager {
 			}
 
 		}
+	}
+
+	public static Class getArgumentType(Class<Argument> c) {
+		try {
+			return c.getMethod("check", new Class[] { CommandSender.class, String.class })
+					.getReturnType();
+		} catch (NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static Class<Argument> getDefaultArgument(Class s) {
