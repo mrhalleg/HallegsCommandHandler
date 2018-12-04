@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import commandManagement.Argument;
-
 public class ConstStringArgument extends Argument<String> {
 	@Override
 	public String check(CommandSender sender, String string) {

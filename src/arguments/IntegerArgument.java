@@ -2,8 +2,6 @@ package arguments;
 
 import org.bukkit.command.CommandSender;
 
-import commandManagement.Argument;
-
 public class IntegerArgument extends Argument<Integer> {
 	@Override
 	public Integer check(CommandSender sender, String string) {

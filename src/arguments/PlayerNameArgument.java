@@ -6,8 +6,6 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import commandManagement.Argument;
-
 public class PlayerNameArgument extends Argument<Player> {
 	@Override
 	public Player check(CommandSender sender, String string) {

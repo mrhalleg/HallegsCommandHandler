@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import commandManagement.Argument;
-
 public class BooleanArgument extends Argument<Boolean> {
 
 	@Override
