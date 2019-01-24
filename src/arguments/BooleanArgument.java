@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 public class BooleanArgument extends Argument<Boolean> {
 
 	@Override
-	public Boolean check(CommandSender sender, String string) {
+	public Boolean convert(CommandSender sender, String string) {
 		if (string.equals("true") || string.equals("1")) {
 			return true;
 		} else if (string.equals("false") || string.equals("0")) {

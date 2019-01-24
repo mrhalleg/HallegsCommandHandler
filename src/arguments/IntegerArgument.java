@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 
 public class IntegerArgument extends Argument<Integer> {
 	@Override
-	public Integer check(CommandSender sender, String string) {
+	public Integer convert(CommandSender sender, String string) {
 		int i = 0;
 		try {
 			i = Integer.parseInt(string);
@@ -13,5 +13,4 @@ public class IntegerArgument extends Argument<Integer> {
 		}
 		return i;
 	}
-
 }

@@ -3,8 +3,9 @@ package arguments;
 import org.bukkit.command.CommandSender;
 
 public class DoubleArgument extends Argument<Double> {
+
 	@Override
-	public Double check(CommandSender sender, String string) {
+	public Double convert(CommandSender sender, String string) {
 		double d = 0;
 		try {
 			d = Double.parseDouble(string);

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 public class PlayerNameArgument extends Argument<Player> {
 	@Override
-	public Player check(CommandSender sender, String string) {
+	public Player convert(CommandSender sender, String string) {
 		for (Player p : sender.getServer().getOnlinePlayers()) {
 			if (p.getDisplayName().equals(string)) {
 				return p;
