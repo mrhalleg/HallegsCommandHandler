@@ -58,15 +58,20 @@ public abstract class Argument<T> {
 			}
 		}
 
+		// if not set already search in defaults
 		if (argClass == null || argClass == Argument.class) {
 			for (Class<?> def : defaults) {
-				if (ClassUtils.isAssignable(getClassFor(def), meth.getParameterTypes()[i], true)) {
+				Class<?> type = meth.getParameterTypes()[i];
+				if (meth.isVarArgs() && i == meth.getParameterCount() - 1) {
+					type = type.getComponentType();
+				}
+				if (ClassUtils.isAssignable(getClassFor(def), type, true)) {
 					argClass = def;
-					System.out.println("using converter: " + def.getTypeName());
 				}
 			}
 		}
 
+		// if no default value is found throw exception
 		if (argClass == null || argClass == Argument.class) {
 			throw new CommandManagerException("There was no suitable Converter found for the " + i
 					+ "th parameter of " + meth.getName() + "(" + meth.getParameters()[i].getType()

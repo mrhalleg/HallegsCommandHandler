@@ -2,6 +2,7 @@ package commandManagement;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,12 +49,16 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
 	private void loadClass(JavaPlugin plugin, Class<?> c) throws CommandManagerException {
 		plugin.getLogger().info("loading command class " + c.getName());
+		// get class annotation
 		PluginCommandContainer classAnno = c.getAnnotation(PluginCommandContainer.class);
+
+		// load standard default arguments
 		List<Class<?>> defaults = new ArrayList<>();
 		for (Class<?> arg : standardArgumentClasses) {
 			defaults.add(arg);
 		}
 
+		// load new defaults into standard default arguments
 		if (classAnno != null) {
 			outer: for (Class<?> def : classAnno.defaults()) {
 				if (!Argument.class.isAssignableFrom(def)) {
@@ -70,33 +75,36 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 			}
 		}
 
-		for (Class<?> clazz : defaults) {
-			System.out.println(clazz + " for " + Argument.getClassFor(clazz));
-		}
-
+		// load all methods
 		Method[] meth = c.getMethods();
 		for (Method m : meth) {
-
 			PluginCommand anno = m.getAnnotation(PluginCommand.class);
+			// if no annotation is present skip this method
 			if (anno == null) {
 				continue;
 			}
 
 			plugin.getLogger().info("loading command method " + m.getName());
 			ArgumentList list = ArgumentList.loadArgumentList(m, defaults);
-			addArgumentList(anno.command().split(" "), list, this);
+
+			List<String> s = new ArrayList<>();
+			for (String str : anno.command().split(" ")) {
+				s.add(str);
+			}
+			// find right position in tree
+			addArgumentList(s, list, this);
 		}
 	}
 
-	private void addArgumentList(String[] s, ArgumentList arg, CommandManager manager) {
+	private void addArgumentList(List<String> s, ArgumentList arg, CommandManager manager) {
 		for (SubCommand comm : manager.subs) {
-			if (comm.getName().equals(s[0])) {
+			if (comm.getName().equals(s.get(0))) {
 				if (comm.addArgumentList(s, arg)) {
 					return;
 				}
 			}
 		}
-		SubCommand newComm = new SubCommand(s[0]);
+		SubCommand newComm = new SubCommand(s.get(0));
 		manager.subs.add(newComm);
 		newComm.addArgumentList(s, arg);
 	}
@@ -115,15 +123,15 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command comm, String label, String[] args) {
-		String[] array = new String[args.length + 1];
-		array[0] = comm.getLabel();
+		List<String> list = new ArrayList<>();
+		list.add(comm.getLabel());
 
 		for (int i = 0; i < args.length; i++) {
-			array[i + 1] = args[i];
+			list.add(args[i]);
 		}
 
 		for (int i = 0; i < this.subs.size(); i++) {
-			if (this.subs.get(i).handle(array, sender)) {
+			if (this.subs.get(i).handle(new ArrayList<>(list), sender)) {
 				sender.sendMessage("command executed!");
 				return true;
 			}
@@ -135,17 +143,12 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command comm, String label,
 			String[] args) {
+		List<String> list = new ArrayList<>();
+		list.add(comm.getLabel());
+		list.addAll(Arrays.asList(args));
 		List<String> complete = new LinkedList<>();
-
-		String[] array = new String[args.length + 1];
-		array[0] = comm.getLabel();
-
-		for (int i = 0; i < args.length; i++) {
-			array[i + 1] = args[i];
-		}
-
 		for (SubCommand sub : this.subs) {
-			complete.addAll(sub.complete(array, sender));
+			complete.addAll(sub.complete(new ArrayList<>(list), sender));
 		}
 		return complete;
 	}
@@ -154,7 +157,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 	public String toString() {
 		String s = "";
 		for (SubCommand c : this.subs) {
-			s += c.toString();
+			s += "base: " + c.getName() + "\n";
+			s += c.logString("");
 		}
 		return s;
 	}
@@ -164,6 +168,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 		singleton = new CommandManager(plugin);
 		singleton.loadClasses(plugin, commandClasses);
 		singleton.registerCommands();
+		singleton.registeTapComplete();
 		plugin.getLogger().info("loaded Commands:\n" + singleton.toString());
 	}
 }

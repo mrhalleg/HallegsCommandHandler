@@ -18,46 +18,45 @@ public class SubCommand {
 	}
 
 	// returns true if the input can be handled by this command
-	public boolean handle(String[] input, CommandSender sender) {
-		if (input.length < 1 || !input[0].equals(this.name)) {
+	public boolean handle(ArrayList<String> input, CommandSender sender) {
+		if (input.size() < 1 || !input.get(0).equals(this.name)) {
 			return false;
 		}
-
-		String[] shortened = new String[input.length - 1];
-		for (int i = 0; i < shortened.length; i++) {
-			shortened[i] = input[i + 1];
-		}
+		input.remove(0);
 
 		for (SubCommand comm : this.subCommands) {
-			if (comm.handle(shortened, sender)) {
+			if (comm.handle(new ArrayList<>(input), sender)) {
 				return true;
 			}
 		}
 
 		for (ArgumentList list : this.argumentLists) {
-			if (list.handle(shortened, sender)) {
+			if (list.handle(new ArrayList<>(input), sender)) {
 				return true;
 			}
 		}
 		return false;
 	}
 
-	public List<String> complete(String[] args, CommandSender sender) {
-		// check if im last
-		System.out.println("complete " + this.name);
+	public List<String> complete(List<String> args, CommandSender sender) {
 		List<String> complete = new ArrayList<>();
-		for (SubCommand c : this.subCommands) {
-			System.out.println("sub: " + c.getName());
+
+		if (args.size() == 0 || args.get(0).isEmpty()) {
+			complete.add(this.getName());
+			return complete;
+		} else if (!args.get(0).equals(this.name)) {
+			return complete;
 		}
-		for (String s : args) {
-			System.out.println("args: " + s);
+
+		args.remove(0);
+		for (SubCommand comm : this.subCommands) {
+			complete.addAll(comm.complete(new ArrayList<>(args), sender));
 		}
-		if (args.length == 1) {
-			System.out.println("im last");
-			for (SubCommand comm : this.subCommands) {
-				complete.add(comm.getName());
-			}
+
+		for (ArgumentList list : this.argumentLists) {
+			complete.addAll(list.complete(new ArrayList<>(args), sender));
 		}
+
 		return complete;
 	}
 
@@ -65,46 +64,33 @@ public class SubCommand {
 		return this.name;
 	}
 
-	public boolean addArgumentList(String[] s, ArgumentList arg) {
-		if (!s[0].equals(this.name)) {
+	public boolean addArgumentList(List<String> s, ArgumentList arg) {
+		if (!s.get(0).equals(this.name)) {
 			return false;
 		}
-		System.out.println("adding argument list to " + this.name);
-		for (String string : s) {
-			System.out.println("s: " + string);
-		}
-		if (s.length == 1) {
-			System.out.println("addet to me");
+		s.remove(0);
+		if (s.size() == 0) {
 			this.argumentLists.add(arg);
 			return true;
 		}
-
-		String[] shortened = new String[s.length - 1];
-		for (int i = 0; i < shortened.length; i++) {
-			shortened[i] = s[i + 1];
-		}
-
 		for (SubCommand sub : this.subCommands) {
-			if (sub.addArgumentList(shortened, arg)) {
+			if (sub.addArgumentList(new ArrayList<>(s), arg)) {
 				return true;
 			}
 		}
-
-		System.out.println("creating command " + s[1]);
-		SubCommand newCom = new SubCommand(s[1]);
+		SubCommand newCom = new SubCommand(s.get(0));
 		this.subCommands.add(newCom);
-		newCom.addArgumentList(shortened, arg);
+		newCom.addArgumentList(new ArrayList<>(s), arg);
 		return true;
 	}
 
-	@Override
-	public String toString() {
+	public String logString(String prefix) {
 		String s = "";
 		for (SubCommand comm : this.subCommands) {
-			s += "<" + this.name + ">" + comm.toString();
+			s += comm.logString(prefix + "<" + this.name + ">");
 		}
 		for (ArgumentList list : this.argumentLists) {
-			s += "<" + this.name + ">" + list.toString();
+			s += list.logString(prefix + "<" + this.name + ">");
 		}
 		return s;
 	}

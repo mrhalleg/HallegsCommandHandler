@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -15,11 +14,11 @@ import arguments.Argument;
 import exceptions.CommandManagerException;
 
 public class ArgumentList {
-	private Method meth;
-	private List<Argument> arguments;
-	private boolean opOnly;
-	private String permission;
-	private boolean playerOnly;
+	protected Method meth;
+	protected List<Argument> arguments;
+	protected boolean opOnly;
+	protected String permission;
+	protected boolean playerOnly;
 
 	public ArgumentList(Method meth, List<Argument> arguments, boolean opOnly, String permission,
 			boolean playerOnly) {
@@ -31,61 +30,50 @@ public class ArgumentList {
 		this.playerOnly = playerOnly;
 	}
 
-	public boolean handle(String[] input, CommandSender sender) {
-		if (input.length != this.arguments.size()) {
+	public boolean handle(ArrayList<String> input, CommandSender sender) {
+		Object[] objs = new Object[this.meth.getParameterCount()];
+		objs[0] = sender;
+		if (input.size() != this.arguments.size()) {
 			return false;
 		}
-
-		Object[] objs = new Object[input.length + 1];
-		objs[0] = sender;
-
-		for (int i = 0; i < input.length; i++) {
-			objs[i + 1] = this.arguments.get(i).convert(sender, input[i]);
+		for (int i = 0; i < this.arguments.size(); i++) {
+			Argument<?> arg = this.arguments.get(i);
+			objs[i + 1] = arg.convert(sender, input.get(i));
 			if (objs[i + 1] == null) {
 				return false;
 			}
 		}
-
 		return runMeth(objs);
 	}
 
-	public List<String> complete(String[] args, CommandSender sender) {
-		int i = 0;
-		for (; i < args.length && this.arguments.size() > i; i++) {
-			if (this.arguments.get(i).convert(sender, args[i]) == null) {
-
+	public List<String> complete(List<String> args, CommandSender sender) {
+		List<String> complete = new ArrayList<>();
+		if (this.arguments.size() < args.size()) {
+			return complete;
+		}
+		for (int i = 0; i < args.size(); i++) {
+			if (args.get(i).isEmpty()) {
+				complete.addAll(this.arguments.get(i).complete(sender));
+				return complete;
+			} else if (this.arguments.get(i).convert(sender, args.get(i)) == null) {
+				return complete;
 			}
 		}
-		if (this.arguments.size() > i) {
-			return this.arguments.get(i).complete(sender);
-		}
-		return new LinkedList<>();
+		return complete;
 	}
 
-	private boolean runMeth(Object[] args) {
+	protected boolean runMeth(Object[] args) {
 		try {
 			return (Boolean) this.meth.invoke(null, args);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-
-			String expected = "expected:\n";
-			for (Class<?> c : this.meth.getParameterTypes()) {
-				expected += c.toString() + "\n";
-			}
-			System.out.println(expected);
-			String actual = "actual:\n";
-			for (Object o : args) {
-				actual += o.getClass().toString() + "\n";
-			}
-			System.out.println(actual);
 			e.printStackTrace();
 		}
 		return false;
 	}
 
-	@Override
-	public String toString() {
-		String s = "(";
-		for (Argument argument : this.arguments) {
+	public String logString(String prefix) {
+		String s = prefix + "(";
+		for (Argument<?> argument : this.arguments) {
 			s += argument.toString();
 		}
 		return s + ")\n";
@@ -117,9 +105,17 @@ public class ArgumentList {
 		}
 
 		// load arguments
+		boolean isArray = false;
 		for (int i = 1; i < meth.getParameterCount(); i++) {
 			arguments.add(Argument.loadArgument(meth, i, defaults));
+			if (meth.isVarArgs()) {
+				isArray = true;
+			}
 		}
-		return new ArgumentList(meth, arguments, opOnly, permission, playerOnly);
+		if (isArray) {
+			return new VarArgumentList(meth, arguments, opOnly, permission, playerOnly);
+		} else {
+			return new ArgumentList(meth, arguments, opOnly, permission, playerOnly);
+		}
 	}
 }

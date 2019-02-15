@@ -25,4 +25,19 @@ public class Commands {
 		player.sendMessage("boop!");
 		return true;
 	}
+
+	@PluginCommand(command = "command player gogo test")
+	public static boolean gogog(Player p, Player player) {
+		p.sendMessage("ypu booped " + player.getName());
+		player.sendMessage("boop!");
+		return true;
+	}
+
+	@PluginCommand(command = "array")
+	public static boolean array(Player p, Player s, Player... is) {
+		for (Player i : is) {
+			System.out.println("i: " + i);
+		}
+		return true;
+	}
 }
