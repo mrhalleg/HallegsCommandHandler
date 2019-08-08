@@ -3,15 +3,18 @@ package plugin;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import arguments.StringConverter;
 import commandManagement.CommandManager;
 import commandManagement.CommandManager.PluginCommand;
+import commandManagement.CommandManager.UseDefaultConverter;
 
+@UseDefaultConverter(converter = StringConverter.class)
 public class TestPlugin extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
 		try {
-			CommandManager.manage(this, new Class<?>[] { TestPlugin.class }, new Class<?>[] {});
+			CommandManager.manage(this, TestPlugin.class, TestPluginCommands.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

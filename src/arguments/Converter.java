@@ -1,14 +1,14 @@
-package commandManagement;
+package arguments;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-public abstract class Argument<T> {
+public abstract class Converter<T> {
 	protected String[] params;
 
-	public Argument() {}
+	public Converter() {}
 
 	abstract public T check(CommandSender sender, String string);
 

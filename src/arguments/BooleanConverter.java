@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import commandManagement.Argument;
-
-public class BooleanArgument extends Argument<Boolean> {
+public class BooleanConverter extends Converter<Boolean> {
 
 	@Override
 	public Boolean check(CommandSender sender, String string) {

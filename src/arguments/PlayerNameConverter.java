@@ -6,9 +6,7 @@ import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import commandManagement.Argument;
-
-public class PlayerNameArgument extends Argument<Player> {
+public class PlayerNameConverter extends Converter<Player> {
 	@Override
 	public Player check(CommandSender sender, String string) {
 		for (Player p : sender.getServer().getOnlinePlayers()) {

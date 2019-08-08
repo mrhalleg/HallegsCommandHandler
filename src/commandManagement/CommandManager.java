@@ -5,35 +5,41 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.ClassUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import arguments.ConstStringArgument;
-import arguments.DoubleArgument;
-import arguments.IntegerArgument;
-import arguments.PlayerNameArgument;
-import arguments.StringArgument;
+import arguments.BooleanConverter;
+import arguments.ConstStringConverter;
+import arguments.Converter;
+import arguments.DoubleConverter;
+import arguments.IntegerConverter;
+import arguments.PlayerNameConverter;
+import arguments.StringConverter;
+import handler.BaseCommandHandler;
+import handler.CommandMethodHandler;
 
-public class CommandManager {
-	private static Map<Class, Class<Argument>> defaultArgumentClasses;
+/**
+ * Main Class for HallegsCommandManager Libary. Call
+ * {@link CommandManager#manage(JavaPlugin, Class...)} to initialize your
+ * PluginCommand Mehtods.
+ */
+public abstract class CommandManager {
+	private static Map<Class, Class<Converter>> defaultArgumentClasses;
 
-	private final static Class<?>[] standardArgumentClasses = { ConstStringArgument.class,
-			DoubleArgument.class, IntegerArgument.class, PlayerNameArgument.class,
-			StringArgument.class };
+	private final static Class<?>[] standardArgumentClasses = { ConstStringConverter.class, DoubleConverter.class,
+			IntegerConverter.class, PlayerNameConverter.class, StringConverter.class, BooleanConverter.class };
 
-	public static void manage(JavaPlugin plugin, Class<?>[] commandClasses,
-			Class<?>[] argumentClasses) throws Exception {
+	public static void manage(JavaPlugin plugin, Class<?>... commandClasses) {
 
 		List<Class> classes = new LinkedList<>();
 		classes.addAll(Arrays.asList(standardArgumentClasses));
-		classes.addAll(Arrays.asList(argumentClasses));
 
 		// load default argument classes
 		defaultArgumentClasses = new HashMap<>();
@@ -41,49 +47,73 @@ public class CommandManager {
 			defaultArgumentClasses.put(getArgumentType(c), c);
 		}
 
-		Map<String, Commander> exes = new HashMap<>();
+		Map<String, BaseCommandHandler> handler = new HashMap<>();
 		// load commandClasses and command methods in them
+		plugin.getLogger().info(
+				"Start Loading Methods With @PluginCommand Annotations in " + commandClasses.length + " Classes...");
+		plugin.getLogger().info("");
+		int errors = 0;
+		int total = 0;
 		for (Class c : commandClasses) {
-			plugin.getLogger().info("loading command class " + c.getName());
+			plugin.getLogger().info("  Class \"" + c.getName() + "\":");
 			Method[] meth = c.getMethods();
 			for (Method m : meth) {
 
 				if (m.getAnnotation(PluginCommand.class) == null) {
 					continue;
 				}
-				plugin.getLogger().info("loading command method " + m.getName());
 
-				if (!Modifier.isStatic(m.getModifiers())) {
-					throw new Exception("The methode " + m.getName()
-							+ " has PluginCommand Annotation but is not static.");
-				}
-				if (m.getReturnType() != boolean.class) {
-					throw new Exception("The methode " + m.getName()
-							+ " has PluginCommand Annotation but does not return a boolean value.");
-				}
 				String name = m.getAnnotation(PluginCommand.class).name();
 
-				if (exes.get(name) == null) {
-					exes.put(name, new Commander(plugin.getCommand(name)));
+				if (handler.get(name) == null) {
+					handler.put(name, new BaseCommandHandler(plugin.getCommand(name)));
 				}
-				exes.get(name).addMehtodeExecutor(new Executor(m));
-			}
+				String status = " success.";
+				try {
+					handler.get(name).addMehtodeExecutor(new CommandMethodHandler(m));
 
+				} catch (CommandManagerLoadingException e) {
+					status = " FAILED : " + e.getMessage() + "!";
+					errors++;
+				}
+				plugin.getLogger().info("   -> Method \"" + methodInformation(m) + "\"" + status);
+				total++;
+			}
+			plugin.getLogger().info("");
+		}
+		plugin.getLogger().info("Done, " + errors + " of " + total + " Methods Failed to Load");
+
+		for (BaseCommandHandler h : handler.values()) {
+			h.printTree();
 		}
 	}
 
-	public static Class getArgumentType(Class<Argument> c) {
+	private static String methodInformation(Method m) {
+		String str = m.getName() + "( ";
+		for (Class<?> par : m.getParameterTypes()) {
+			str += par.getSimpleName() + " ";
+		}
+		return str + ")";
+	}
+
+	public static Class getArgumentType(Class<Converter> c) {
 		try {
-			return c.getMethod("check", new Class[] { CommandSender.class, String.class })
-					.getReturnType();
+			return c.getMethod("check", new Class[] { CommandSender.class, String.class }).getReturnType();
 		} catch (NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static Class<Argument> getDefaultArgument(Class s) {
-		return defaultArgumentClasses.get(s);
+	public static Class<Converter> getDefaultArgument(Class s) {
+		// System.out.println("checking: " + s);
+		for (Class c : defaultArgumentClasses.keySet()) {
+			// System.out.println("curr: " + c);
+			if (ClassUtils.isAssignable(c, s, true)) {
+				return defaultArgumentClasses.get(c);
+			}
+		}
+		return null;
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -100,14 +130,15 @@ public class CommandManager {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.PARAMETER)
-	public @interface ArgumentParameter {
-		Class type() default Argument.class;
+	public @interface UseConverter {
+		Class type() default Converter.class;
 
 		String[] params() default {};
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
-	public @interface DefaultArgumentClass {
+	public @interface UseDefaultConverter {
+		Class converter();
 	}
 }

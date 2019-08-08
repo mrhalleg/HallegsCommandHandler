@@ -2,9 +2,7 @@ package arguments;
 
 import org.bukkit.command.CommandSender;
 
-import commandManagement.Argument;
-
-public class DoubleArgument extends Argument<Double> {
+public class DoubleConverter extends Converter<Double> {
 	@Override
 	public Double check(CommandSender sender, String string) {
 		double d = 0;

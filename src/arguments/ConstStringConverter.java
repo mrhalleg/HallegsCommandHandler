@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.bukkit.command.CommandSender;
 
-import commandManagement.Argument;
-
-public class ConstStringArgument extends Argument<String> {
+public class ConstStringConverter extends Converter<String> {
 	@Override
 	public String check(CommandSender sender, String string) {
 		for (int i = 0; i < this.params.length; i++) {

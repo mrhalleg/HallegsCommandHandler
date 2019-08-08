@@ -2,9 +2,7 @@ package arguments;
 
 import org.bukkit.command.CommandSender;
 
-import commandManagement.Argument;
-
-public class IntegerArgument extends Argument<Integer> {
+public class IntegerConverter extends Converter<Integer> {
 	@Override
 	public Integer check(CommandSender sender, String string) {
 		int i = 0;
