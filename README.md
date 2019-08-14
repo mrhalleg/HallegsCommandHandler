@@ -68,12 +68,17 @@ This will create the command `/calculator` with the two Subcommands `add` and `s
 A Command with Subcommands can stil have normal methods:
 ~~~
 @PluginCommand(name = "calculator")
-public static boolean subCommand(CommandSender sender, int arg1) {
+public static boolean calcCommand(CommandSender sender, int arg1) {
     //duh
     sender.sendMessage(arg1 + " = " + arg1);
     return true;
 }
 ~~~
+
+all of the following commands are valid:
+`/calculator add 1 1`
+`/calculator sub 1 1`
+`/calculator 1`
 
 # 3 - Permissions and OPs
 to restrict Players from using your Commands you can use Permissions or make them op Only.
