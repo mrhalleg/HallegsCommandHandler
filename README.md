@@ -88,7 +88,7 @@ to restrict Players from using your Commands you can use Permissions or make the
 For this the `@PluginCommand` is used:
 
 ~~~
-@PluginCommand(name = "add")
+@PluginCommand(name = "add", opOnly = true, permission = "calcualor")
 public static boolean addCommand(CommandSender sender, int arg1 , int arg2) {
 //...
 ~~~
