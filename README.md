@@ -49,7 +49,7 @@ public class TestPlugin extends JavaPlugin {
     }
 }
 ~~~
-# 2 Subcommands
+# 2 - Subcommands
 whith many Plugins you may want a command to have subcommands. This can be achieved by using spaces in the `name` argument the `@PluginCommand` Annotation:
 ~~~
 @PluginCommand(name = "calculator add")
