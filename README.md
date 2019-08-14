@@ -88,11 +88,9 @@ to restrict Players from using your Commands you can use Permissions or make the
 For this the `@PluginCommand` is used:
 
 ~~~
-@PluginCommand(name = "calculator", opOnly = true, permission = "calcualor")
-public static boolean calcCommand(CommandSender sender, int arg1) {
-    sender.sendMessage(arg1 + " = " + arg1);
-    return true;
-}
+@PluginCommand(name = "add")
+public static boolean addCommand(CommandSender sender, int arg1 , int arg2) {
+//...
 ~~~
 
  - opOnly: if this is true the method can only be accesed by players that are OP. By default all methods are opOnly for security reasons.
