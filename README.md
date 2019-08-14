@@ -65,6 +65,16 @@ public static boolean subCommand(CommandSender sender, int arg1, int arg2) {
 ~~~
 This will create the command `/calculator` with the two Subcommands `add` and `sub`. There are no limits to how many subcommands you can have and a subcommand can have even more subcommands.
 
+A Command with Subcommands can stil have normal methods:
+~~~
+@PluginCommand(name = "calculator")
+public static boolean subCommand(CommandSender sender, int arg1) {
+    //duh
+    sender.sendMessage(arg1 + " = " + arg1);
+    return true;
+}
+~~~
+
 # 3 - Permissions and OPs
 to restrict Players from using your Commands you can use Permissions or make them op Only.
 For this the `@PluginCommand` Annotaion has two Parameters:
