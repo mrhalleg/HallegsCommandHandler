@@ -3,7 +3,7 @@ A Libary to manage commands for Minecraft Spigot Plugins.
 
 This Libary aim is to make it easier to manage commands an use features like permissions and autocomplete
 
-# 1 - Intro:
+# 1 - Basics:
 
 With this Libary you can make "CommandMehtods" which get executed when a Player issues a Command with the right arguments and permissions.
 Such a Mehtod can look like this:
@@ -49,8 +49,7 @@ public class TestPlugin extends JavaPlugin {
     }
 }
 ~~~
-# 2 - indepth
-# 2.1 Subcommands
+# 2 Subcommands
 whith many Plugins you may want a command to have subcommands. This can be achieved by using spaces in the `name` argument the `@PluginCommand` Annotation:
 ~~~
 @PluginCommand(name = "calculator add")
@@ -67,15 +66,16 @@ public static boolean subCommand(CommandSender sender, int arg1, int arg2) {
 ~~~
 This will create the command `/calculator` with the two Subcommands `add` and `sub`. There are no limits to how many subcommands you can have and a subcommand can have even more subcommands.
 
-# 2.2 - Permissions and OPs
+# 3 - Permissions and OPs
 to restrict Players from using your Commands you can use Permissions or make them op Only.
 For this the `@PluginCommand` Annotaion has two Parameters:
  - opOnly: if this is true the method can only be accesed by players that are OP. By default all methods are opOnly for security reasons.
  - permission: the mehtod can only be accesed by players that have this permission. If it contains a empty String anyone can acces this mehtod. By default there is no permission set.
  
- # 3 - Converter
-Converters are manly used to convert user input(Strings) to the correct datatype for the command mehtod. They also handle tap  completion and tips when a invalid dommand was issued.
- 
+ # 4 - Converter
+Converters are manly used to convert user input(Strings) to the correct datatype for the command mehtod. They also handle tap completion and tips when a invalid dommand was issued.
+
+# 4.1 - Default Converter
 By Default these Datatypes can be converted:
  - Boolean
  - Double
@@ -84,7 +84,8 @@ By Default these Datatypes can be converted:
  - Material
  - Player
  - String
- 
+
+# 4.2 - Custom Converter
 To use diffrent Datatypes in your CommandMehtods you need to write your own Converter. A simple Converter my look like this:
  ~~~
  public class BooleanConverter extends Converter<Boolean> {
@@ -114,3 +115,4 @@ The `check()` mehtod is responsible for the actual conversion. The String argume
 The `complete()` method is responsible to give options for tap-completion.
 
 To use your custom Converter you can use the `@UseConverter` or `@SetDefaultConverter` Annotations.
+# 4.3 - Converter Parameter
