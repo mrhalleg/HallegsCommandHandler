@@ -4,7 +4,6 @@ A Libary to manage commands for Minecraft Spigot Plugins.
 This Libary aim is to make it easier to manage commands an use features like permissions and autocomplete
 
 # 1 - Basics:
-
 With this Libary you can make "CommandMehtods" which get executed when a Player issues a Command with the right arguments and permissions.
 Such a Mehtod can look like this:
 ~~~
@@ -114,5 +113,7 @@ The `check()` mehtod is responsible for the actual conversion. The String argume
 
 The `complete()` method is responsible to give options for tap-completion.
 
+# 4.3 - Using Custom Converter
 To use your custom Converter you can use the `@UseConverter` or `@SetDefaultConverter` Annotations.
-# 4.3 - Converter Parameter
+
+# 4.4 - Converter Parameter
