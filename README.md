@@ -75,7 +75,7 @@ public static boolean calcCommand(CommandSender sender, int arg1) {
 }
 ~~~
 
-all of the following commands are valid:
+Now all of the following commands are valid:
 
 `/calculator add 1 1` with output: `1 + 1 = 2`
 
