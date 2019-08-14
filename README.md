@@ -76,9 +76,12 @@ public static boolean calcCommand(CommandSender sender, int arg1) {
 ~~~
 
 all of the following commands are valid:
-`/calculator add 1 1`
-`/calculator sub 1 1`
-`/calculator 1`
+
+`/calculator add 1 1` with output: `1 + 1 = 2`
+
+`/calculator sub 1 1` with output: `1 - 1 = 0`
+
+`/calculator 1` with output: `1 = 1`
 
 # 3 - Permissions and OPs
 to restrict Players from using your Commands you can use Permissions or make them op Only.
