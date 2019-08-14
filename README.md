@@ -109,3 +109,8 @@ To use diffrent Datatypes in your CommandMehtods you need to write your own Conv
 }
  ~~~
  
+The `check()` mehtod is responsible for the actual conversion. The String argument is the String that is to be convertet. If it cant be converted null is returned.
+
+The `complete()` method is responsible to give options for tap-completion.
+
+To use your custom Converter you can use the `@UseConverter` or `@SetDefaultConverter` Annotations.
