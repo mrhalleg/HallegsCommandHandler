@@ -85,7 +85,16 @@ Now all of the following commands are valid:
 
 # 3 - Permissions and OPs
 to restrict Players from using your Commands you can use Permissions or make them op Only.
-For this the `@PluginCommand` Annotaion has two Parameters:
+For this the `@PluginCommand` is used:
+
+~~~
+@PluginCommand(name = "calculator", opOnly = true, permission = "calcualor")
+public static boolean calcCommand(CommandSender sender, int arg1) {
+    sender.sendMessage(arg1 + " = " + arg1);
+    return true;
+}
+~~~
+
  - opOnly: if this is true the method can only be accesed by players that are OP. By default all methods are opOnly for security reasons.
  - permission: the mehtod can only be accesed by players that have this permission. If it contains a empty String anyone can acces this mehtod. By default there is no permission set.
  
