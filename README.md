@@ -6,7 +6,7 @@ This Libary aim is to make it easier to manage commands an use features like per
 Im already using this in my [RecepieBooks](https://github.com/mrhalleg/RecepieBooks) Plugin. Check it out if you need some examples.
 
 
-# 1 - How it works:
+# 1 - Intro:
 
 With this Libary you can make "CommandMehtods" which get executed when a Player issues a Command with the right arguments and permissions.
 Such a Mehtod can look like this:
@@ -52,5 +52,26 @@ public class TestPlugin extends JavaPlugin {
     }
 }
 ~~~
+# 2 - indepth
+# 2.1 Subcommands
+whith many Plugins you may want a command to have subcommands. This can be achieved by using spaces in the `name` argument the `@PluginCommand` Annotation:
+~~~
+@PluginCommand(name = "calculator add")
+public static boolean addCommand(CommandSender sender, int arg1, int arg2) {
+    sender.sendMessage(arg1 + " + " + arg2 + " = " + (arg1 + arg2));
+    return true;
+}
 
+@PluginCommand(name = "calculator sub")
+public static boolean subCommand(CommandSender sender, int arg1, int arg2) {
+    sender.sendMessage(arg1 + " - " + arg2 + " = " + (arg1- arg2));
+    return true;
+}
+~~~
+This will create the command `/calculator` with the two Subcommands `add` and `sub`. There are no limits to how many subcommands you can have and a subcommand can have even more subcommands.
 
+# 2.2 Permissions and OPs
+to restrict Players from using your Commands you can use Permissions or make them op Only.
+For this the `@PluginCommand` Annotaion has two Parameters:
+ - opOnly: if this is true the method can only be accesed by players that are OP. By default all methods are opOnly for security reasons.
+ - permission: the mehtod can only be accesed by players that have this permission. If it contains a empty String anyone can acces this mehtod. By default there is no permission set.
