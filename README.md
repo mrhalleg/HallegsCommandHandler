@@ -1,10 +1,7 @@
 # HallegsCommandHandler
 A Libary to manage commands for Minecraft Spigot Plugins.
 
-This Libary aim is to make it easier to manage commands an use features like permissions and autocomplete.
-
-Im already using this in my [RecepieBooks](https://github.com/mrhalleg/RecepieBooks) Plugin. Check it out if you need some examples.
-
+This Libary aim is to make it easier to manage commands an use features like permissions and autocomplete
 
 # 1 - Intro:
 
@@ -70,8 +67,45 @@ public static boolean subCommand(CommandSender sender, int arg1, int arg2) {
 ~~~
 This will create the command `/calculator` with the two Subcommands `add` and `sub`. There are no limits to how many subcommands you can have and a subcommand can have even more subcommands.
 
-# 2.2 Permissions and OPs
+# 2.2 - Permissions and OPs
 to restrict Players from using your Commands you can use Permissions or make them op Only.
 For this the `@PluginCommand` Annotaion has two Parameters:
  - opOnly: if this is true the method can only be accesed by players that are OP. By default all methods are opOnly for security reasons.
  - permission: the mehtod can only be accesed by players that have this permission. If it contains a empty String anyone can acces this mehtod. By default there is no permission set.
+ 
+ # 3 - Converter
+Converters are manly used to convert user input(Strings) to the correct datatype for the command mehtod. They also handle tap  completion and tips when a invalid dommand was issued.
+ 
+By Default these Datatypes can be converted:
+ - Boolean
+ - Double
+ - Integer
+ - Intem
+ - Material
+ - Player
+ - String
+ 
+To use diffrent Datatypes in your CommandMehtods you need to write your own Converter. A simple Converter my look like this:
+ ~~~
+ public class BooleanConverter extends Converter<Boolean> {
+
+	@Override
+	public Boolean check(CommandSender sender, String string) {
+		if (string.equals("true") || string.equals("1")) {
+			return true;
+		} else if (string.equals("false") || string.equals("0")) {
+			return false;
+		}
+		return null;
+	}
+
+	@Override
+	public List<String> complete(CommandSender sender) {
+		List<String> ret = new LinkedList<>();
+		ret.add("true");
+		ret.add("false");
+		return ret;
+	}
+}
+ ~~~
+ 
