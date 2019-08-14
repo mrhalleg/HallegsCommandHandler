@@ -15,15 +15,14 @@ import org.apache.commons.lang.ClassUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import arguments.BooleanConverter;
-import arguments.ConstStringConverter;
-import arguments.Converter;
-import arguments.DoubleConverter;
-import arguments.IntegerConverter;
-import arguments.PlayerNameConverter;
-import arguments.StringConverter;
+import converter.BooleanConverter;
+import converter.ConstStringConverter;
+import converter.Converter;
+import converter.DoubleConverter;
+import converter.IntegerConverter;
+import converter.PlayerNameConverter;
+import converter.StringConverter;
 import handler.BaseCommandHandler;
-import handler.CommandMethodHandler;
 
 /**
  * Main Class for HallegsCommandManager Libary. Call
@@ -47,15 +46,14 @@ public abstract class CommandManager {
 			defaultArgumentClasses.put(getArgumentType(c), c);
 		}
 
-		Map<String, BaseCommandHandler> handler = new HashMap<>();
+		BaseCommandHandler baseHandler = new BaseCommandHandler(plugin);
 		// load commandClasses and command methods in them
 		plugin.getLogger().info(
 				"Start Loading Methods With @PluginCommand Annotations in " + commandClasses.length + " Classes...");
-		plugin.getLogger().info("");
 		int errors = 0;
 		int total = 0;
 		for (Class c : commandClasses) {
-			plugin.getLogger().info("  Class \"" + c.getName() + "\":");
+			plugin.getLogger().info("Class \"" + c.getName() + "\":");
 			Method[] meth = c.getMethods();
 			for (Method m : meth) {
 
@@ -64,34 +62,31 @@ public abstract class CommandManager {
 				}
 
 				String name = m.getAnnotation(PluginCommand.class).name();
+				String[] args = name.split(" ");
 
-				if (handler.get(name) == null) {
-					handler.put(name, new BaseCommandHandler(plugin.getCommand(name)));
-				}
 				String status = " success.";
 				try {
-					handler.get(name).addMehtodeExecutor(new CommandMethodHandler(m));
-
+					baseHandler.addHandler(args, m);
 				} catch (CommandManagerLoadingException e) {
-					status = " FAILED : " + e.getMessage() + "!";
+					status = " FAILED: " + e.getMessage() + "!";
 					errors++;
 				}
-				plugin.getLogger().info("   -> Method \"" + methodInformation(m) + "\"" + status);
+				plugin.getLogger().info(" -> Method \"" + methodInformation(m) + "\"" + status);
 				total++;
 			}
-			plugin.getLogger().info("");
 		}
 		plugin.getLogger().info("Done, " + errors + " of " + total + " Methods Failed to Load");
-
-		for (BaseCommandHandler h : handler.values()) {
-			h.printTree();
-		}
+		plugin.getLogger().info("Loaded SubCommand Tree:");
+		baseHandler.printTree();
 	}
 
-	private static String methodInformation(Method m) {
-		String str = m.getName() + "( ";
-		for (Class<?> par : m.getParameterTypes()) {
-			str += par.getSimpleName() + " ";
+	public static String methodInformation(Method m) {
+		String str = m.getName() + "(";
+		for (int i = 0; i < m.getParameterTypes().length; i++) {
+			str += m.getParameterTypes()[i].getSimpleName();
+			if (!(i == m.getParameterTypes().length - 1)) {
+				str += ", ";
+			}
 		}
 		return str + ")";
 	}
@@ -121,9 +116,7 @@ public abstract class CommandManager {
 	public @interface PluginCommand {
 		String name();
 
-		boolean opOnly()
-
-		default true;
+		boolean opOnly() default true;
 
 		String permission() default "";
 	}

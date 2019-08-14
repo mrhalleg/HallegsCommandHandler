@@ -13,17 +13,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import arguments.Converter;
 import commandManagement.CommandManager;
 import commandManagement.CommandManager.PluginCommand;
 import commandManagement.CommandManager.UseConverter;
 import commandManagement.CommandManagerLoadingException;
+import converter.Converter;
 import net.md_5.bungee.api.ChatColor;
 
 /**
- * Manages one Command Method. Represents a Leaf in the command Forest.
+ * Manages one Command and Method. Represents a Leaf in the command Forest.
  */
-public class CommandMethodHandler extends SubCommandHandler {
+public class CommandMethodHandler {
 	private Method methode;
 	private List<Converter> converter;
 	private String permission;
@@ -118,15 +118,16 @@ public class CommandMethodHandler extends SubCommandHandler {
 
 	}
 
-	public List<Object> getParameter(CommandSender sender, String[] args) {
-		if (args.length != this.converter.size()) {
+	public List<Object> getParameter(CommandSender sender, String[] args, int offset) {
+
+		if (args.length - offset != this.converter.size()) {
 			return null;
 		}
 
 		List<Object> ret = new LinkedList<>();
 
-		for (int i = 0; i < args.length; i++) {
-			Object o = this.converter.get(i).check(sender, args[i]);
+		for (int i = 0; i < (args.length - offset); i++) {
+			Object o = this.converter.get(i).check(sender, args[offset + i]);
 			if (o != null) {
 				ret.add(o);
 			} else {
@@ -137,10 +138,10 @@ public class CommandMethodHandler extends SubCommandHandler {
 		return ret;
 	}
 
-	public boolean command(CommandSender sender, Command command, String label, String[] args) {
+	public boolean command(CommandSender sender, Command command, String[] args, int offset) {
 		try {
 			// check if this command can be used and with which parameters
-			List<Object> ret = getParameter(sender, args);
+			List<Object> ret = getParameter(sender, args, offset);
 			if (ret == null) {
 				return false;
 			}
@@ -170,18 +171,45 @@ public class CommandMethodHandler extends SubCommandHandler {
 		return false;
 	}
 
-	public List<String> complete(CommandSender sender, Command command, String label, String[] args) {
-		if (args.length > this.converter.size()) {
-			return new ArrayList<>();
+	public List<String> complete(CommandSender sender, Command command, String[] args, int offset, int argnr) {
+
+		System.out.println("in method offset: " + offset + " argnr: " + argnr);
+		List<String> ret = new LinkedList<>();
+
+		// too many arguments for me?
+		if (argnr >= converter.size()) {
+			System.out.println("argnr to big!");
+			return ret;
 		}
-		return this.converter.get(args.length - 1).complete(sender);
+
+		// do i need to add the current converter?
+		if (offset == args.length) {
+			System.out.println("adding current!");
+			ret.addAll(this.converter.get(argnr).complete(sender));
+			System.out.println("returning in mehtod: " + ret);
+			return ret;
+		}
+
+		// can i go deeper?
+		if (converter.get(argnr).check(sender, args[offset]) == null) {
+			System.out.println("doesnt fit anymore");
+			return ret;
+		}
+
+		System.out.println("going deeper");
+		return complete(sender, command, args, offset + 1, argnr + 1);
 	}
 
-	public static String getParameterDisciption(Method m, int i) {
-		return i + "(" + m.getParameterTypes()[i].getName() + ")";
-	}
+	public String printTree(String pre) {
+		String out = "\n" + pre + "+- (";
 
-	public void printTree() {
-
+		for (int i = 1; i < this.methode.getParameterTypes().length; i++) {
+			out += this.methode.getParameterTypes()[i].getSimpleName();
+			if (!(i == this.methode.getParameterTypes().length - 1)) {
+				out += ", ";
+			}
+		}
+		out += ")";
+		return out;
 	}
 }

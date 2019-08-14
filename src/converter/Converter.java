@@ -1,4 +1,4 @@
-package arguments;
+package converter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,8 @@ import org.bukkit.command.CommandSender;
 public abstract class Converter<T> {
 	protected String[] params;
 
-	public Converter() {}
+	public Converter() {
+	}
 
 	abstract public T check(CommandSender sender, String string);
 
@@ -21,5 +22,9 @@ public abstract class Converter<T> {
 		for (int i = 0; i < params.length; i++) {
 			this.params[i] = params[i];
 		}
+	}
+
+	public String tip() {
+		return "<?>";
 	}
 }

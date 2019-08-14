@@ -1,4 +1,4 @@
-package arguments;
+package converter;
 
 import org.bukkit.command.CommandSender;
 
