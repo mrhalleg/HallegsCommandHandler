@@ -1,12 +1,13 @@
-package converter;
+package converter.defaults;
 
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
+
+import converter.Converter;
 
 public class ItemConverter extends Converter<Item> {
 
 	@Override
-	public Item check(CommandSender sender, String string) {
+	public Item convert(String string) {
 		// TODO Auto-generated method stub
 		return null;
 	}

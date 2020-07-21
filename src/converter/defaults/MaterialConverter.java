@@ -1,12 +1,13 @@
-package converter;
+package converter.defaults;
 
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
+
+import converter.Converter;
 
 public class MaterialConverter extends Converter<Material> {
 
 	@Override
-	public Material check(CommandSender sender, String string) {
+	public Material convert(String string) {
 		// TODO Auto-generated method stub
 		return null;
 	}

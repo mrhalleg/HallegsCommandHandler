@@ -6,23 +6,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ClassUtils;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import converter.BooleanConverter;
-import converter.ConstStringConverter;
 import converter.Converter;
-import converter.DoubleConverter;
-import converter.IntegerConverter;
-import converter.PlayerNameConverter;
-import converter.StringConverter;
-import handler.BaseCommandHandler;
+import converter.ConverterConvertException;
+import converter.defaults.BooleanConverter;
+import converter.defaults.DoubleConverter;
+import converter.defaults.IntegerConverter;
+import converter.defaults.StringConverter;
+import handler.BaseCommand;
+import handler.CommandHandler;
+import handler.SubCommand;
+import handler.builder.BaseCommandBuilder;
+import handler.builder.MethodBuilder;
+import handler.builder.SubCommandBuilder;
+import mehtod.MehtodHandler;
 
 /**
  * Main Class for HallegsCommandManager Libary. Call
@@ -32,52 +35,96 @@ import handler.BaseCommandHandler;
 public abstract class CommandManager {
 	private static Map<Class, Class<Converter>> defaultArgumentClasses;
 
-	private final static Class<?>[] standardArgumentClasses = { ConstStringConverter.class, DoubleConverter.class,
-			IntegerConverter.class, PlayerNameConverter.class, StringConverter.class, BooleanConverter.class };
+	private static List<Class<? extends Converter<?>>> standardConverter() {
+		List<Class<? extends Converter<?>>> list = new LinkedList();
+		list.add(BooleanConverter.class);
+		list.add(StringConverter.class);
+		list.add(IntegerConverter.class);
+		list.add(DoubleConverter.class);
+		return list;
+	}
 
-	public static void manage(JavaPlugin plugin, Class<?>... commandClasses) {
+	public static void manage(SubCommandBuilder subBuilder, BaseCommandBuilder baseBuilder, MethodBuilder methodBuilder,
+			Class<?>... commandClasses) {
 
-		List<Class> classes = new LinkedList<>();
-		classes.addAll(Arrays.asList(standardArgumentClasses));
-
-		// load default argument classes
-		defaultArgumentClasses = new HashMap<>();
-		for (Class c : classes) {
-			defaultArgumentClasses.put(getArgumentType(c), c);
-		}
-
-		BaseCommandHandler baseHandler = new BaseCommandHandler(plugin);
 		// load commandClasses and command methods in them
-		plugin.getLogger().info(
-				"Start Loading Methods With @PluginCommand Annotations in " + commandClasses.length + " Classes...");
-		int errors = 0;
-		int total = 0;
 		for (Class c : commandClasses) {
-			plugin.getLogger().info("Class \"" + c.getName() + "\":");
-			Method[] meth = c.getMethods();
-			for (Method m : meth) {
-
-				if (m.getAnnotation(PluginCommand.class) == null) {
-					continue;
-				}
-
-				String name = m.getAnnotation(PluginCommand.class).name();
-				String[] args = name.split(" ");
-
-				String status = " success.";
+			try {
+				BaseCommand base = loadBaseClass(c, subBuilder, baseBuilder, methodBuilder, standardConverter());
+				base.printTree();
 				try {
-					baseHandler.addHandler(args, m);
-				} catch (CommandManagerLoadingException e) {
-					status = " FAILED: " + e.getMessage() + "!";
-					errors++;
+					base.command("bool add -1 2");
+				} catch (ConverterConvertException e) {
+					System.out.println(e.getMessage());
 				}
-				plugin.getLogger().info(" -> Method \"" + methodInformation(m) + "\"" + status);
-				total++;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		plugin.getLogger().info("Done, " + errors + " of " + total + " Methods Failed to Load");
-		plugin.getLogger().info("Loaded SubCommand Tree:");
-		baseHandler.printTree();
+	}
+
+	private static BaseCommand loadBaseClass(Class<?> clazz, SubCommandBuilder subBuilder,
+			BaseCommandBuilder baseBuilder, MethodBuilder methodBuilder,
+			List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
+		CommandClass comm = clazz.<CommandClass>getAnnotation(CommandClass.class);
+
+		if (comm == null) {
+			return null;
+		}
+
+		BaseCommand handler = baseBuilder.build(clazz, comm);
+
+		for (Class<?> c : getChildCommands(clazz, comm)) {
+			loadSubClass(c, handler.getCommand(), subBuilder, methodBuilder, standardConverter);
+		}
+
+		for (Method m : clazz.getMethods()) {
+			loadMethod(m, handler.getCommand(), methodBuilder, standardConverter);
+		}
+
+		return handler;
+	}
+
+	private static void loadSubClass(Class<?> clazz, CommandHandler parent, SubCommandBuilder subBuilder,
+			MethodBuilder methodBuilder, List<Class<? extends Converter<?>>> standardConverter)
+			throws CommandManagerLoadingException {
+		CommandClass anno = clazz.<CommandClass>getAnnotation(CommandClass.class);
+
+		if (anno == null) {
+			return;
+		}
+
+		SubCommand handler = subBuilder.build(clazz, anno);
+		parent.addCommand(handler);
+
+		for (Class c : getChildCommands(clazz, anno)) {
+			loadSubClass(c, handler, subBuilder, methodBuilder, standardConverter);
+		}
+
+		for (Method m : clazz.getMethods()) {
+			loadMethod(m, handler, methodBuilder, standardConverter);
+		}
+	}
+
+	private static List<Class<?>> getChildCommands(Class<?> clazz, CommandClass anno) {
+		List<Class<?>> ret = new LinkedList<>();
+		ret.addAll(Arrays.asList(clazz.getDeclaredClasses()));
+		ret.addAll(Arrays.asList(anno.children()));
+
+		return ret;
+	}
+
+	private static void loadMethod(Method meth, CommandHandler parent, MethodBuilder methodBuilder,
+			List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
+
+		CommandMehtod anno = meth.<CommandMehtod>getAnnotation(CommandMehtod.class);
+
+		if (anno == null) {
+			return;
+		}
+
+		MehtodHandler handler = methodBuilder.build(meth, standardConverter);
+		parent.addMethod(handler);
 	}
 
 	public static String methodInformation(Method m) {
@@ -89,15 +136,6 @@ public abstract class CommandManager {
 			}
 		}
 		return str + ")";
-	}
-
-	public static Class getArgumentType(Class<Converter> c) {
-		try {
-			return c.getMethod("check", new Class[] { CommandSender.class, String.class }).getReturnType();
-		} catch (NoSuchMethodException | SecurityException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	public static Class<Converter> getDefaultArgument(Class s) {
@@ -112,26 +150,25 @@ public abstract class CommandManager {
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public @interface PluginCommand {
+	@Target(ElementType.TYPE)
+	public @interface CommandClass {
 		String name();
 
-		boolean opOnly() default true;
+		String[] alias() default {};
 
-		String permission() default "";
+		Class<?>[] children() default {};
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.METHOD)
+	public @interface CommandMehtod {
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.PARAMETER)
 	public @interface UseConverter {
-		Class type() default Converter.class;
+		Class<? extends Converter<?>> type();
 
 		String[] params() default {};
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public @interface UseDefaultConverter {
-		Class converter();
 	}
 }

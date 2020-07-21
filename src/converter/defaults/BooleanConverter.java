@@ -1,14 +1,14 @@
-package converter;
+package converter.defaults;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.command.CommandSender;
+import converter.Converter;
 
 public class BooleanConverter extends Converter<Boolean> {
 
 	@Override
-	public Boolean check(CommandSender sender, String string) {
+	public Boolean convert(String string) {
 		if (string.equals("true") || string.equals("1")) {
 			return true;
 		} else if (string.equals("false") || string.equals("0")) {
@@ -18,7 +18,7 @@ public class BooleanConverter extends Converter<Boolean> {
 	}
 
 	@Override
-	public List<String> complete(CommandSender sender) {
+	public List<String> complete() {
 		List<String> ret = new LinkedList<>();
 		ret.add("true");
 		ret.add("false");

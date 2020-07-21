@@ -1,17 +1,13 @@
-package plugin;
-
-import org.bukkit.plugin.java.JavaPlugin;
+package testCommands;
 
 import commandManagement.CommandManager;
 import handler.builder.BaseCommandBuilder;
 import handler.builder.MethodBuilder;
 import handler.builder.SubCommandBuilder;
-import testCommands.BoolCommand;
 
-public class TestPlugin extends JavaPlugin {
+public class Main {
 
-	@Override
-	public void onEnable() {
+	public static void main(String[] args) {
 		try {
 			CommandManager.manage(new SubCommandBuilder(), new BaseCommandBuilder(),
 					new MethodBuilder(), BoolCommand.class);
