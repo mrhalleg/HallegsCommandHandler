@@ -27,11 +27,11 @@ the first argument cant be convertet to a number so the method would not run.
 
 
 
-For a methode to be recognised it must meet the following requirements:
-* the methode must be in one of the classes listed in the later arguments of `manage()` as described below.
-* the methode must have the `@PluginCommand` Annotation.
-* the methode must be **static**.
-* the methode must return a **boolean**.
+For a method to be recognised it must meet the following requirements:
+* the method must be in one of the classes listed in the later arguments of `manage()` as described below.
+* the method must have the `@PluginCommand` Annotation.
+* the method must be **static**.
+* the method must return a **boolean**.
 * the first parameter must be a `CommandSender` or `Player`.
 * after the first parameter the methode can have none,one or more parameters. They all need a Converter Class.
 
@@ -97,7 +97,7 @@ public static boolean addCommand(CommandSender sender, int arg1 , int arg2) {
  - permission: the mehtod can only be accesed by players that have this permission. If it contains a empty String anyone can acces this mehtod. By default there is no permission set.
  
  # 4 - Converter
-Converters are manly used to convert user input(Strings) to the correct datatype for the command mehtod. They also handle tap completion and tips when a invalid dommand was issued.
+Converters are manly used to convert user input(Strings) to the correct datatype for the command mehtod. They also handle tap completion and tips when a invalid command was issued.
 
 # 4.1 - Default Converter
 By Default these Datatypes can be converted:
@@ -134,7 +134,7 @@ To use diffrent Datatypes in your CommandMehtods you need to write your own Conv
 }
  ~~~
  
-The `check()` mehtod is responsible for the actual conversion. The String argument is the String that is to be convertet. If it cant be converted null is returned.
+The `check()` mehtod is responsible for the actual conversion. The String argument is the String that is to be converted. If it cant be converted null is returned.
 
 The `complete()` method is responsible to give options for tap-completion.
 
