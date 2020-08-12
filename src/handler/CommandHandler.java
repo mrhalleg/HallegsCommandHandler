@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import commandManagement.CommandManager.CommandClass;
-import mehtod.MehtodParameter;
+import handler.mehtod.MehtodParameter;
 
 public abstract class CommandHandler extends CommandTreeNode {
 	protected String name;

@@ -24,7 +24,7 @@ import handler.SubCommand;
 import handler.builder.BaseCommandBuilder;
 import handler.builder.MethodBuilder;
 import handler.builder.SubCommandBuilder;
-import mehtod.MehtodParameter;
+import handler.mehtod.MehtodParameter;
 
 /**
  * Main Class for HallegsCommandManager Libary. Call

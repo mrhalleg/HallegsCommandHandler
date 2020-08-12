@@ -11,12 +11,12 @@ import commandManagement.CommandManager.CommandMehtod;
 import commandManagement.CommandManager.UseConverter;
 import commandManagement.CommandManagerLoadingException;
 import converter.Converter;
-import mehtod.EnvironmentMethodParameter;
-import mehtod.InvokerEndMehtodParameter;
-import mehtod.MehtodParameter;
-import mehtod.ChainMehtodParameter;
-import mehtod.MethodChainElement;
-import mehtod.VarMethodParameter;
+import handler.mehtod.ChainMehtodParameter;
+import handler.mehtod.EnvironmentMethodParameter;
+import handler.mehtod.InvokerEndMehtodParameter;
+import handler.mehtod.MehtodParameter;
+import handler.mehtod.MethodChainElement;
+import handler.mehtod.VarMethodParameter;
 
 public class MethodBuilder {
 	public MehtodParameter build(Method meth, CommandMehtod anno, List<Class<? extends Converter<?>>> defaultConverter)
@@ -71,7 +71,6 @@ public class MethodBuilder {
 		} else {
 			param = m.getParameterTypes()[i];
 		}
-		System.out.println(param);
 
 		Class<? extends Converter<?>> convClass = null;
 		UseConverter anno = null;

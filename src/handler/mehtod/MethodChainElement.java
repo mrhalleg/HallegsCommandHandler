@@ -1,4 +1,4 @@
-package mehtod;
+package handler.mehtod;
 
 public abstract class MethodChainElement extends MehtodParameter {
 
