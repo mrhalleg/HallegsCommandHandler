@@ -28,27 +28,28 @@ public abstract class CommandHandler {
 		handler.add(command);
 	}
 
-	public boolean command(String[] args, int offset) {
+	public String command(String[] args, int offset) {
 		if (offset >= args.length) {
-			return false;
+			return null;
 		}
 
 		if (!args[offset].equals(name)) {
-			return false;
+			return null;
 		}
 
 		for (SubCommand e : this.handler) {
-			if (e.command(args, offset + 1)) {
-				return true;
+			String ret = e.command(args, offset + 1);
+			if (ret != null) {
+				return ret;
 			}
 		}
 
 		for (MehtodHandler m : methods) {
 			if (m.command(args, offset + 1)) {
-				return true;
+				return null;
 			}
 		}
-		return false;
+		return printTree("", true);
 	}
 
 	public List<String> complete(String[] args, int offset) {

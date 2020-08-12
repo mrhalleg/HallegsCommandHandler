@@ -21,7 +21,7 @@ public class BaseCommand {
 		System.out.println(command.printTree("", true));
 	}
 
-	public boolean command(String string) {
+	public String command(String string) {
 		String[] arr = string.split(" ");
 		return command.command(arr, 0);
 	}

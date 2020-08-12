@@ -19,7 +19,9 @@ public class MehtodParameter extends MehtodHandler {
 
 	@Override
 	public boolean command(String[] args, int offset, List<Object> list) {
-
+		if (offset == args.length) {
+			return false;
+		}
 		Object ret = converter.convert(args[offset]);
 		if (ret == null) {
 			return false;

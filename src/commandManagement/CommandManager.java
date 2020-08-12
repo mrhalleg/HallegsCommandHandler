@@ -51,7 +51,7 @@ public abstract class CommandManager {
 			try {
 				BaseCommand base = loadBaseClass(c, subBuilder, baseBuilder, methodBuilder, standardConverter());
 				base.printTree();
-				base.command("bool add 1 2");
+				System.out.print(base.command("bool not m"));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
