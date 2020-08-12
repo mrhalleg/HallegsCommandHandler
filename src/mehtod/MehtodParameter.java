@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import converter.Converter;
-import converter.ConverterConvertException;
 
 public class MehtodParameter extends MehtodHandler {
 	private Converter<?> converter;
@@ -19,7 +18,7 @@ public class MehtodParameter extends MehtodHandler {
 	}
 
 	@Override
-	public boolean command(String[] args, int offset, List<Object> list) throws ConverterConvertException {
+	public boolean command(String[] args, int offset, List<Object> list) {
 
 		Object ret = converter.convert(args[offset]);
 		if (ret == null) {
@@ -43,11 +42,8 @@ public class MehtodParameter extends MehtodHandler {
 			return ret;
 		}
 
-		try {
-			if (converter.convert(args[offset]) == null) {
-				return ret;
-			}
-		} catch (ConverterConvertException e) {
+		if (converter.convert(args[offset]) == null) {
+			return ret;
 		}
 
 		ret.addAll(next.complete(args, offset + 1));

@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import commandManagement.CommandManager.CommandClass;
-import converter.ConverterConvertException;
 import mehtod.MehtodHandler;
 
 public abstract class CommandHandler {
@@ -29,7 +28,7 @@ public abstract class CommandHandler {
 		handler.add(command);
 	}
 
-	public boolean command(String[] args, int offset) throws ConverterConvertException {
+	public boolean command(String[] args, int offset) {
 		if (offset >= args.length) {
 			return false;
 		}

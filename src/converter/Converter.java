@@ -13,7 +13,7 @@ public abstract class Converter<T> {
 
 	}
 
-	abstract public T convert(String string) throws ConverterConvertException;
+	abstract public T convert(String string);
 
 	public List<String> complete() {
 		return new ArrayList<>();

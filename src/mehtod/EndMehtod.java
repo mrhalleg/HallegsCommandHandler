@@ -2,7 +2,6 @@ package mehtod;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,12 +15,12 @@ public class EndMehtod extends MehtodHandler {
 	@Override
 	public boolean command(String[] args, int offset, List<Object> list) {
 
-		if (offset + 1 != args.length) {
+		if (offset != args.length) {
 			return false;
 		}
 
 		try {
-			methode.invoke(null, Arrays.asList(list));
+			methode.invoke(null, list.toArray());
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 			return false;

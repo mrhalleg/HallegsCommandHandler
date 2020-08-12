@@ -3,7 +3,6 @@ package handler;
 import java.util.List;
 
 import commandManagement.CommandManager.CommandClass;
-import converter.ConverterConvertException;
 
 /**
  * Manages one base command. e.g. every user input beginning with "/test". one
@@ -22,7 +21,7 @@ public class BaseCommand {
 		System.out.println(command.printTree("", true));
 	}
 
-	public boolean command(String string) throws ConverterConvertException {
+	public boolean command(String string) {
 		String[] arr = string.split(" ");
 		return command.command(arr, 0);
 	}

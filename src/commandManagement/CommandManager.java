@@ -14,7 +14,6 @@ import org.apache.commons.lang.ClassUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import converter.Converter;
-import converter.ConverterConvertException;
 import converter.defaults.BooleanConverter;
 import converter.defaults.DoubleConverter;
 import converter.defaults.IntegerConverter;
@@ -52,11 +51,7 @@ public abstract class CommandManager {
 			try {
 				BaseCommand base = loadBaseClass(c, subBuilder, baseBuilder, methodBuilder, standardConverter());
 				base.printTree();
-				try {
-					base.command("bool add -1 2");
-				} catch (ConverterConvertException e) {
-					System.out.println(e.getMessage());
-				}
+				base.command("bool add 1 2");
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

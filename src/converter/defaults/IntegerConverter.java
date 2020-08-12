@@ -7,7 +7,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import converter.Converter;
-import converter.ConverterConvertException;
 
 public class IntegerConverter extends Converter<Integer> {
 	private int max = Integer.MAX_VALUE;
@@ -25,7 +24,7 @@ public class IntegerConverter extends Converter<Integer> {
 	}
 
 	@Override
-	public Integer convert(String string) throws ConverterConvertException {
+	public Integer convert(String string) {
 		int i = 0;
 		try {
 			i = Integer.parseInt(string);
@@ -33,7 +32,7 @@ public class IntegerConverter extends Converter<Integer> {
 			return null;
 		}
 		if (i < min || i > max) {
-			throw new ConverterConvertException("number out of range " + min + " < " + i + " < " + max);
+			return null;
 		}
 
 		return i;
