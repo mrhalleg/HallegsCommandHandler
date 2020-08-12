@@ -5,28 +5,28 @@ import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EndMehtod extends MehtodHandler {
+public class InvokerEndMehtodParameter extends MehtodParameter {
 	private Method methode;
 
-	public EndMehtod(Method methode) {
+	public InvokerEndMehtodParameter(Method methode) {
 		this.methode = methode;
 	}
 
 	@Override
-	public boolean command(String[] args, int offset, List<Object> list) {
+	public boolean command(String[] args, int offset, List<Object> list, Object t) {
 
 		if (offset != args.length) {
 			return false;
 		}
 
 		try {
-			methode.invoke(null, list.toArray());
+			Object[] arr = list.toArray();
+			methode.invoke(null, arr);
+			return true;
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 			return false;
 		}
-
-		return false;
 	}
 
 	@Override

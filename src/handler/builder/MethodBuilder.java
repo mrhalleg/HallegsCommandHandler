@@ -7,20 +7,34 @@ import java.util.List;
 
 import org.apache.commons.lang.ClassUtils;
 
+import commandManagement.CommandManager.CommandMehtod;
 import commandManagement.CommandManager.UseConverter;
 import commandManagement.CommandManagerLoadingException;
 import converter.Converter;
-import mehtod.EndMehtod;
-import mehtod.MehtodHandler;
+import mehtod.EnvironmentMethodParameter;
+import mehtod.InvokerEndMehtodParameter;
 import mehtod.MehtodParameter;
+import mehtod.ChainMehtodParameter;
+import mehtod.MethodChainElement;
+import mehtod.VarMethodParameter;
 
 public class MethodBuilder {
-	public MehtodHandler build(Method meth, List<Class<? extends Converter<?>>> defaultConverter)
+	public MehtodParameter build(Method meth, CommandMehtod anno, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
-		MehtodParameter prev = null;
-		MehtodParameter first = null;
-		for (int i = 0; i < meth.getParameterTypes().length; i++) {
-			MehtodParameter curr = loadParameter(meth, i, defaultConverter);
+		MethodChainElement prev = null;
+		MethodChainElement first = null;
+
+		int i = 0;
+
+		if (anno.hasEnvironemntParameter()) {
+			prev = loadEnvironmentParameter(meth);
+			first = prev;
+			i++;
+		}
+
+		for (; i < meth.getParameterTypes().length; i++) {
+
+			MethodChainElement curr = loadParameter(meth, i, defaultConverter);
 			if (prev != null) {
 				prev.setNext(curr);
 			} else {
@@ -29,7 +43,7 @@ public class MethodBuilder {
 			prev = curr;
 		}
 
-		EndMehtod end = new EndMehtod(meth);
+		InvokerEndMehtodParameter end = new InvokerEndMehtodParameter(meth);
 
 		if (prev != null) {
 			prev.setNext(end);
@@ -42,9 +56,23 @@ public class MethodBuilder {
 		}
 	}
 
-	private MehtodParameter loadParameter(Method m, int i, List<Class<? extends Converter<?>>> defaultConverter)
+	private MethodChainElement loadEnvironmentParameter(Method meth) throws CommandManagerLoadingException {
+		if (meth.getParameters().length < 1) {
+			throw new CommandManagerLoadingException("mehtod needs atleast 1 parameter to use Special Annotation");
+		}
+		return new EnvironmentMethodParameter(meth.getParameters()[0]);
+	}
+
+	private MethodChainElement loadParameter(Method m, int i, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
-		Class<?> param = m.getParameterTypes()[i];
+		Class<?> param = null;
+		if (m.getParameters()[i].isVarArgs()) {
+			param = m.getParameterTypes()[i].getComponentType();
+		} else {
+			param = m.getParameterTypes()[i];
+		}
+		System.out.println(param);
+
 		Class<? extends Converter<?>> convClass = null;
 		UseConverter anno = null;
 
@@ -90,7 +118,10 @@ public class MethodBuilder {
 
 		conv.loadAnnotations(m.getParameterAnnotations()[i]);
 
-		// add the argument instance to the list
-		return new MehtodParameter(conv);
+		if (m.getParameters()[i].isVarArgs()) {
+			return new VarMethodParameter(conv, param);
+		} else {
+			return new ChainMehtodParameter(conv);
+		}
 	}
 }

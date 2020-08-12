@@ -24,7 +24,7 @@ import handler.SubCommand;
 import handler.builder.BaseCommandBuilder;
 import handler.builder.MethodBuilder;
 import handler.builder.SubCommandBuilder;
-import mehtod.MehtodHandler;
+import mehtod.MehtodParameter;
 
 /**
  * Main Class for HallegsCommandManager Libary. Call
@@ -51,7 +51,7 @@ public abstract class CommandManager {
 			try {
 				BaseCommand base = loadBaseClass(c, subBuilder, baseBuilder, methodBuilder, standardConverter());
 				base.printTree();
-				System.out.print(base.command("bool not m"));
+				base.command("bool 1 test dasd asda not maybe", 123);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -118,7 +118,7 @@ public abstract class CommandManager {
 			return;
 		}
 
-		MehtodHandler handler = methodBuilder.build(meth, standardConverter);
+		MehtodParameter handler = methodBuilder.build(meth, anno, standardConverter);
 		parent.addMethod(handler);
 	}
 
@@ -157,6 +157,7 @@ public abstract class CommandManager {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.METHOD)
 	public @interface CommandMehtod {
+		boolean hasEnvironemntParameter() default false;
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)

@@ -14,7 +14,7 @@ public class BoolNotCommand {
 	@CommandClass(name = "maybe")
 	public static class MaybeCommand {
 		@CommandMehtod()
-		public static boolean empty() {
+		public static boolean empty(String s) {
 			System.out.println("maybe");
 			return true;
 		}

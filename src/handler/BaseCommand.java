@@ -21,9 +21,9 @@ public class BaseCommand {
 		System.out.println(command.printTree("", true));
 	}
 
-	public String command(String string) {
+	public String command(String string, Object environment) {
 		String[] arr = string.split(" ");
-		return command.command(arr, 0);
+		return command.command(arr, 0, environment);
 	}
 
 	public List<String> complete(String string) {

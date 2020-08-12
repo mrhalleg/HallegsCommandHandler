@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import commandManagement.CommandManager.CommandClass;
-import mehtod.MehtodHandler;
+import mehtod.MehtodParameter;
 
-public abstract class CommandHandler {
+public abstract class CommandHandler extends CommandTreeNode {
 	protected String name;
-	protected List<MehtodHandler> methods;
+	protected List<MehtodParameter> methods;
 	protected List<SubCommand> handler;
 	protected String[] alias;
 
@@ -20,7 +20,7 @@ public abstract class CommandHandler {
 		handler = new LinkedList<>();
 	}
 
-	public void addMethod(MehtodHandler method) {
+	public void addMethod(MehtodParameter method) {
 		methods.add(method);
 	}
 
@@ -28,7 +28,7 @@ public abstract class CommandHandler {
 		handler.add(command);
 	}
 
-	public String command(String[] args, int offset) {
+	public String command(String[] args, int offset, Object environment) {
 		if (offset >= args.length) {
 			return null;
 		}
@@ -38,14 +38,14 @@ public abstract class CommandHandler {
 		}
 
 		for (SubCommand e : this.handler) {
-			String ret = e.command(args, offset + 1);
+			String ret = e.command(args, offset + 1, environment);
 			if (ret != null) {
 				return ret;
 			}
 		}
 
-		for (MehtodHandler m : methods) {
-			if (m.command(args, offset + 1)) {
+		for (MehtodParameter m : methods) {
+			if (m.command(args, offset + 1, environment)) {
 				return null;
 			}
 		}
@@ -68,7 +68,7 @@ public abstract class CommandHandler {
 			ret.addAll(e.complete(args, offset + 1));
 		}
 
-		for (MehtodHandler e : this.methods) {
+		for (MehtodParameter e : this.methods) {
 			ret.addAll(e.complete(args, offset + 1));
 		}
 		return ret;

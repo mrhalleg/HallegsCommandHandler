@@ -6,9 +6,11 @@ import converter.defaults.IntegerConverter.IntMin;
 
 @CommandClass(name = "bool", alias = { "boolean" }, children = { BoolNotCommand.class })
 public class BoolCommand {
-	@CommandMehtod()
-	public static boolean bool(String a) {
-		System.out.println(" value = " + a);
+	@CommandMehtod(hasEnvironemntParameter = false)
+	public static boolean bool(int i, String... a) {
+		for (String string : a) {
+			System.out.println(string);
+		}
 		return true;
 	}
 

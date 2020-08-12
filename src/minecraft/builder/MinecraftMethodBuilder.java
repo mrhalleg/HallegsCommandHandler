@@ -10,17 +10,17 @@ import org.apache.commons.lang.ClassUtils;
 import commandManagement.CommandManager.UseConverter;
 import commandManagement.CommandManagerLoadingException;
 import converter.Converter;
-import mehtod.EndMehtod;
-import mehtod.MehtodHandler;
+import mehtod.InvokerEndMehtodParameter;
 import mehtod.MehtodParameter;
+import mehtod.ChainMehtodParameter;
 
 public class MinecraftMethodBuilder {
-	public MehtodHandler build(Method meth, List<Class<? extends Converter<?>>> defaultConverter)
+	public MehtodParameter build(Method meth, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
-		MehtodParameter prev = null;
-		MehtodParameter first = null;
+		ChainMehtodParameter prev = null;
+		ChainMehtodParameter first = null;
 		for (int i = 0; i < meth.getParameterTypes().length; i++) {
-			MehtodParameter curr = loadParameter(meth, i, defaultConverter);
+			ChainMehtodParameter curr = loadParameter(meth, i, defaultConverter);
 			if (prev != null) {
 				prev.setNext(curr);
 			} else {
@@ -29,7 +29,7 @@ public class MinecraftMethodBuilder {
 			prev = curr;
 		}
 
-		EndMehtod end = new EndMehtod(meth);
+		InvokerEndMehtodParameter end = new InvokerEndMehtodParameter(meth);
 
 		if (prev != null) {
 			prev.setNext(end);
@@ -42,7 +42,7 @@ public class MinecraftMethodBuilder {
 		}
 	}
 
-	private MehtodParameter loadParameter(Method m, int i, List<Class<? extends Converter<?>>> defaultConverter)
+	private ChainMehtodParameter loadParameter(Method m, int i, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
 		Class<?> param = m.getParameterTypes()[i];
 		Class<? extends Converter<?>> convClass = null;
@@ -91,6 +91,6 @@ public class MinecraftMethodBuilder {
 		conv.loadAnnotations(m.getParameterAnnotations()[i]);
 
 		// add the argument instance to the list
-		return new MehtodParameter(conv);
+		return new ChainMehtodParameter(conv);
 	}
 }
