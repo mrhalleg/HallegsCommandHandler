@@ -3,7 +3,7 @@ package testCommands;
 import commandManagement.annotations.CommandClass;
 import commandManagement.annotations.CommandClassContainer;
 import commandManagement.annotations.CommandMehtod;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 @CommandClassContainer
 public class MathCommands {

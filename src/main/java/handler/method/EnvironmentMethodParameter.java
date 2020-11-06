@@ -2,7 +2,7 @@ package handler.method;
 
 import commandManagement.result.method.MethodFailResult;
 import commandManagement.result.method.MethodResult;
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.Parameter;
 import java.util.List;

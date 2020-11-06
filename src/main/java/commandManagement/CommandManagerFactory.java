@@ -14,7 +14,7 @@ import handler.builder.SubCommandBuilder;
 import handler.command.BaseCommand;
 import handler.command.SubCommand;
 import handler.method.MethodParameter;
-import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang3.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
