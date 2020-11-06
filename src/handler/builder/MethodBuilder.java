@@ -1,8 +1,8 @@
 package handler.builder;
 
-import commandManagement.CommandManagerFactory.CommandMehtod;
-import commandManagement.CommandManagerFactory.UseConverter;
 import commandManagement.CommandManagerLoadingException;
+import commandManagement.annotations.CommandMehtod;
+import commandManagement.annotations.UseConverter;
 import converter.Converter;
 import handler.method.*;
 import org.apache.commons.lang.ClassUtils;

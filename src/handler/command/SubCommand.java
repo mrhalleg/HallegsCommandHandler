@@ -1,6 +1,6 @@
 package handler.command;
 
-import commandManagement.CommandManagerFactory.CommandClass;
+import commandManagement.annotations.CommandClass;
 import commandManagement.result.Result;
 import commandManagement.result.command.CommandFailResult;
 import commandManagement.result.command.CommandMehtodFailResult;
@@ -104,7 +104,7 @@ public class SubCommand extends CommandTreeNode {
 
 	@Override
 	public String toString() {
-		return this.name + " [" + String.join(" ", this.alias) + "]";
+		return this.name + "[" + String.join(",", this.alias) + "]";
 	}
 
 	public String getName() {

@@ -1,6 +1,6 @@
 package handler.command;
 
-import commandManagement.CommandManagerFactory.CommandClass;
+import commandManagement.annotations.CommandClass;
 import commandManagement.result.Result;
 
 public class BaseCommand {

@@ -16,7 +16,7 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			CommandManager manager = CommandManagerFactory.createCommandManager(new SubCommandBuilder(), new BaseCommandBuilder(),
-					new MethodBuilder(), Math.class);
+					new MethodBuilder(), MathCommands.class, BoolCommands.class);
 
 			BufferedReader reader =
 					new BufferedReader(new InputStreamReader(System.in));

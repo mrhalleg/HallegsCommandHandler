@@ -1,6 +1,6 @@
 package handler.builder;
 
-import commandManagement.CommandManagerFactory.CommandClass;
+import commandManagement.annotations.CommandClass;
 import handler.command.SubCommand;
 
 public class SubCommandBuilder {

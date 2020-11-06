@@ -1,5 +1,8 @@
 package commandManagement;
 
+import commandManagement.annotations.CommandClass;
+import commandManagement.annotations.CommandClassContainer;
+import commandManagement.annotations.CommandMehtod;
 import converter.Converter;
 import converter.defaults.BooleanConverter;
 import converter.defaults.DoubleConverter;
@@ -13,10 +16,6 @@ import handler.command.SubCommand;
 import handler.method.MethodParameter;
 import org.apache.commons.lang.ClassUtils;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -131,9 +130,7 @@ public abstract class CommandManagerFactory {
 	}
 
 	public static Class<Converter> getDefaultArgument(Class s) {
-		// System.out.println("checking: " + s);
 		for (Class c : defaultArgumentClasses.keySet()) {
-			// System.out.println("curr: " + c);
 			if (ClassUtils.isAssignable(c, s, true)) {
 				return defaultArgumentClasses.get(c);
 			}
@@ -141,32 +138,4 @@ public abstract class CommandManagerFactory {
 		return null;
 	}
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public @interface CommandClassContainer {
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.TYPE)
-	public @interface CommandClass {
-		String name();
-
-		String[] alias() default {};
-
-		Class<?>[] children() default {};
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.METHOD)
-	public @interface CommandMehtod {
-		boolean hasEnvironemntParameter() default false;
-	}
-
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.PARAMETER)
-	public @interface UseConverter {
-		Class<? extends Converter<?>> type();
-
-		String[] params() default {};
-	}
 }
