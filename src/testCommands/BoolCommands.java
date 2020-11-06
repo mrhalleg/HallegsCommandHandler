@@ -15,7 +15,7 @@ public class BoolCommands {
 	@CommandClass(name = "not")
 	public static class NotCommand {
 		@CommandMehtod()
-		public static boolean nit(boolean b) {
+		public static boolean not(boolean b) {
 			System.out.println("!" + b + " = " + !b);
 			return true;
 		}
