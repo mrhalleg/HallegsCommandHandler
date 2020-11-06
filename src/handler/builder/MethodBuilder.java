@@ -60,6 +60,7 @@ public class MethodBuilder {
 	private NodeMethodParameter loadParameter(Method m, int i, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
 		Class<?> param = null;
+
 		if (m.getParameters()[i].isVarArgs()) {
 			param = m.getParameterTypes()[i].getComponentType();
 		} else {

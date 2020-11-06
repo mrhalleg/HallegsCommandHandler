@@ -1,5 +1,6 @@
 package handler.method;
 
+import commandManagement.CommandManagerLoadingException;
 import commandManagement.result.method.MethodResult;
 import converter.Converter;
 
@@ -12,9 +13,12 @@ public class VarMethodParameter extends NodeMethodParameter {
 	private Class<?> type;
 	private MethodParameter next;
 
-	public VarMethodParameter(Converter<?> converter, Class<?> type) {
+	public VarMethodParameter(Converter<?> converter, Class<?> type) throws CommandManagerLoadingException {
 		super();
 		this.converter = converter;
+		if (type.isPrimitive()) {
+			throw new CommandManagerLoadingException("No primitive Types allowed in VarMethodParameter.");
+		}
 		this.type = type;
 	}
 
@@ -55,5 +59,10 @@ public class VarMethodParameter extends NodeMethodParameter {
 			return this.next.printTree(pre, params + ", " + this.converter.getClass().getSimpleName() + "...");
 		}
 
+	}
+
+	@Override
+	public String toString() {
+		return this.converter.getClass().getName() + "...";
 	}
 }

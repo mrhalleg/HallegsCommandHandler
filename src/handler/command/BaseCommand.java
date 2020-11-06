@@ -16,7 +16,8 @@ public class BaseCommand {
 	}
 
 	public Result search(String string, Object environment) {
-		String[] arr = string.split(" ");
+		String cleaned = string.trim().replaceAll(" +", " ");
+		String[] arr = cleaned.split(" ");
 		return this.command.search(arr, 0, environment);
 	}
 

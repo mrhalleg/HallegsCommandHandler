@@ -33,13 +33,23 @@ public abstract class CommandManagerFactory {
 	}
 
 	public static CommandManager createCommandManager(SubCommandBuilder subBuilder, BaseCommandBuilder baseBuilder, MethodBuilder methodBuilder,
-													  Class<?>... commandClasses) {
+													  Class<?>... classes) throws CommandManagerLoadingException {
 		List<BaseCommand> bases = new ArrayList<>();
-		for (Class c : commandClasses) {
-			try {
-				bases.add(loadBaseClass(c, subBuilder, baseBuilder, methodBuilder, standardConverter()));
-			} catch (Exception e) {
-				e.printStackTrace();
+		for (Class<?> clazz : classes) {
+			CommandClassContainer container = clazz.getAnnotation(CommandClassContainer.class);
+
+			if (container != null) {
+				for (Class<?> c : clazz.getDeclaredClasses()) {
+					BaseCommand ret = loadBaseClass(c, subBuilder, baseBuilder, methodBuilder, standardConverter());
+					if (ret != null) {
+						bases.add(ret);
+					}
+				}
+			} else {
+				BaseCommand ret = loadBaseClass(clazz, subBuilder, baseBuilder, methodBuilder, standardConverter());
+				if (ret != null) {
+					bases.add(ret);
+				}
 			}
 		}
 		return new CommandManager(bases);
@@ -48,7 +58,7 @@ public abstract class CommandManagerFactory {
 	private static BaseCommand loadBaseClass(Class<?> clazz, SubCommandBuilder subBuilder,
 											 BaseCommandBuilder baseBuilder, MethodBuilder methodBuilder,
 											 List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
-		CommandClass comm = clazz.<CommandClass>getAnnotation(CommandClass.class);
+		CommandClass comm = clazz.getAnnotation(CommandClass.class);
 
 		if (comm == null) {
 			return null;
@@ -129,6 +139,11 @@ public abstract class CommandManagerFactory {
 			}
 		}
 		return null;
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	public @interface CommandClassContainer {
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
