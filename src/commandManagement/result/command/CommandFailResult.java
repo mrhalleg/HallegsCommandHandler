@@ -1,14 +1,14 @@
 package commandManagement.result.command;
 
 import commandManagement.result.FailResult;
-import handler.command.CommandHandler;
+import handler.command.SubCommand;
 
 import java.util.List;
 
 public class CommandFailResult extends FailResult {
-	protected CommandHandler command;
+	protected SubCommand command;
 
-	public CommandFailResult(CommandHandler commandHandler) {
+	public CommandFailResult(SubCommand commandHandler) {
 		this.command = commandHandler;
 	}
 

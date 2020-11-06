@@ -5,10 +5,10 @@ import commandManagement.result.Result;
 
 public class BaseCommand {
 
-	protected CommandHandler command;
+	protected SubCommand command;
 
 	public BaseCommand(Class<?> clazz, CommandClass comm) {
-		this.command = new CommandHandler(clazz, comm);
+		this.command = new SubCommand(clazz, comm);
 	}
 
 	public void printTree() {
@@ -20,7 +20,7 @@ public class BaseCommand {
 		return this.command.search(arr, 0, environment);
 	}
 
-	public CommandHandler getCommand() {
+	public SubCommand getCommand() {
 		return this.command;
 	}
 }

@@ -9,7 +9,7 @@ import handler.builder.BaseCommandBuilder;
 import handler.builder.MethodBuilder;
 import handler.builder.SubCommandBuilder;
 import handler.command.BaseCommand;
-import handler.command.CommandHandler;
+import handler.command.SubCommand;
 import handler.method.MethodParameter;
 import org.apache.commons.lang.ClassUtils;
 
@@ -67,7 +67,7 @@ public abstract class CommandManagerFactory {
 		return handler;
 	}
 
-	private static void loadSubClass(Class<?> clazz, CommandHandler parent, SubCommandBuilder subBuilder,
+	private static void loadSubClass(Class<?> clazz, SubCommand parent, SubCommandBuilder subBuilder,
 									 MethodBuilder methodBuilder, List<Class<? extends Converter<?>>> standardConverter)
 			throws CommandManagerLoadingException {
 		CommandClass anno = clazz.<CommandClass>getAnnotation(CommandClass.class);
@@ -76,7 +76,7 @@ public abstract class CommandManagerFactory {
 			return;
 		}
 
-		CommandHandler handler = subBuilder.build(clazz, anno);
+		SubCommand handler = subBuilder.build(clazz, anno);
 		parent.addCommand(handler);
 
 		for (Class c : getChildCommands(clazz, anno)) {
@@ -96,7 +96,7 @@ public abstract class CommandManagerFactory {
 		return ret;
 	}
 
-	private static void loadMethod(Method meth, CommandHandler parent, MethodBuilder methodBuilder,
+	private static void loadMethod(Method meth, SubCommand parent, MethodBuilder methodBuilder,
 								   List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
 
 		CommandMehtod anno = meth.<CommandMehtod>getAnnotation(CommandMehtod.class);

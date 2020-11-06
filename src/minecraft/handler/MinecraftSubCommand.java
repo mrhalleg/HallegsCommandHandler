@@ -1,12 +1,12 @@
 package minecraft.handler;
 
 import commandManagement.CommandManagerFactory.CommandClass;
-import handler.command.CommandHandler;
+import handler.command.SubCommand;
 
 /**
  * Manages
  */
-public class MinecraftSubCommand extends CommandHandler {
+public class MinecraftSubCommand extends SubCommand {
 
 	public MinecraftSubCommand(Class<?> clazz, CommandClass anno, MinecraftCommandClass mc) {
 		super(clazz, anno);

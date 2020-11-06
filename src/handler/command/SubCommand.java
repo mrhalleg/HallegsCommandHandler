@@ -13,13 +13,13 @@ import handler.method.MethodParameter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CommandHandler extends CommandTreeNode {
+public class SubCommand extends CommandTreeNode {
 	protected String name;
 	protected List<MethodParameter> methods;
-	protected List<CommandHandler> handler;
+	protected List<SubCommand> handler;
 	protected String[] alias;
 
-	public CommandHandler(Class<?> clazz, CommandClass anno) {
+	public SubCommand(Class<?> clazz, CommandClass anno) {
 		super();
 		this.name = anno.name();
 		this.alias = anno.alias();
@@ -31,7 +31,7 @@ public class CommandHandler extends CommandTreeNode {
 		this.methods.add(method);
 	}
 
-	public void addCommand(CommandHandler command) {
+	public void addCommand(SubCommand command) {
 		this.handler.add(command);
 	}
 
@@ -44,7 +44,7 @@ public class CommandHandler extends CommandTreeNode {
 			return null;
 		}
 
-		for (CommandHandler e : this.handler) {
+		for (SubCommand e : this.handler) {
 			Result ret = e.search(args, offset + 1, environment);
 			if (ret != null) {
 				ret.addPath(this);
