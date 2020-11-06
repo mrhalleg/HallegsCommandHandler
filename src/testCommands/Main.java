@@ -2,6 +2,8 @@ package testCommands;
 
 import commandManagement.CommandManager;
 import commandManagement.CommandManagerFactory;
+import commandManagement.result.Result;
+import commandManagement.result.SuccesResult;
 import handler.builder.BaseCommandBuilder;
 import handler.builder.MethodBuilder;
 import handler.builder.SubCommandBuilder;
@@ -19,8 +21,12 @@ public class Main {
 			BufferedReader reader =
 					new BufferedReader(new InputStreamReader(System.in));
 			manager.printTree();
-			while(true){
-				System.out.println(manager.command(reader.readLine(),null));
+			while (true) {
+				Result r = manager.search(reader.readLine(), null);
+				if (r instanceof SuccesResult) {
+					((SuccesResult) r).getExecutable().execute();
+				}
+				System.out.println(r);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

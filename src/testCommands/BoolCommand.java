@@ -4,7 +4,7 @@ import commandManagement.CommandManagerFactory.CommandClass;
 import commandManagement.CommandManagerFactory.CommandMehtod;
 import converter.defaults.IntegerConverter.IntMin;
 
-@CommandClass(name = "bool", alias = { "boolean" }, children = { BoolNotCommand.class })
+@CommandClass(name = "bool", alias = {"boolean"}, children = {BoolNotCommand.class})
 public class BoolCommand {
 	@CommandMehtod(hasEnvironemntParameter = false)
 	public static boolean bool(int i, String... a) {
@@ -27,8 +27,8 @@ public class BoolCommand {
 	@CommandClass(name = "or")
 	public static class OrCommand {
 		@CommandMehtod()
-		public static boolean or(boolean a, boolean b) {
-			System.out.println(" a OR b = " + (a || b));
+		public static boolean or(boolean a, boolean b, boolean c, boolean d) {
+			System.out.println(" a OR b = " + (a || b || c || d));
 			return true;
 		}
 

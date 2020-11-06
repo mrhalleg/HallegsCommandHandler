@@ -1,11 +1,12 @@
 package commandManagement.result.command;
 
+import commandManagement.result.FailResult;
 import commandManagement.result.method.MethodFailResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandMehtodFailResult extends CommandResult {
+public class CommandMehtodFailResult extends FailResult {
 	private List<MethodFailResult> fails;
 
 	public CommandMehtodFailResult() {
@@ -24,8 +25,15 @@ public class CommandMehtodFailResult extends CommandResult {
 
 	@Override
 	public String toString() {
-		return "CommandMehtodFailResult{" +
-				"fails=" + this.fails +
-				'}';
+		String s = "Failed!";
+		for (MethodFailResult r : this.fails) {
+			s += joinNodes(" ") + r.toString() + "\n";
+		}
+		return s;
+	}
+
+	@Override
+	public List<String> suggest() {
+		return null;
 	}
 }

@@ -1,7 +1,7 @@
 package minecraft.handler;
 
 import commandManagement.CommandManagerFactory.CommandClass;
-import handler.BaseCommand;
+import handler.command.BaseCommand;
 import minecraft.handler.MinecraftSubCommand.MinecraftCommandClass;
 
 /**
@@ -13,9 +13,9 @@ public class MinecraftBaseCommand extends BaseCommand {
 	public String description;
 
 	public MinecraftBaseCommand(Class<?> clazz, CommandClass comm, MinecraftCommandClass mcComm,
-			MinecraftBaseCommandClass mcBase) {
+								MinecraftBaseCommandClass mcBase) {
 		super(clazz, comm);
-		description = mcBase.description();
+		this.description = mcBase.description();
 	}
 
 	public @interface MinecraftBaseCommandClass {

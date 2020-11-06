@@ -7,7 +7,7 @@ import org.apache.commons.lang.ClassUtils;
 import java.lang.reflect.Parameter;
 import java.util.List;
 
-public class EnvironmentMethodParameter extends MethodChainElement {
+public class EnvironmentMethodParameter extends NodeMethodParameter {
 	private Class<?> type;
 	private MethodParameter next;
 
@@ -16,19 +16,15 @@ public class EnvironmentMethodParameter extends MethodChainElement {
 	}
 
 	@Override
-	public MethodResult command(String[] args, int offset, List<Object> list, Object special) {
+	public MethodResult search(String[] args, int offset, List<Object> list, Object special) {
 		Class<?> c = special.getClass();
 		if (special != null && ClassUtils.isAssignable(c, this.type, true)) {
 			list.add(special);
-			this.next.command(args, offset, list, special);
-			return null;
+			MethodResult ret = this.next.search(args, offset, list, special);
+			ret.addPath(this);
+			return ret;
 		}
 		return new MethodFailResult(this);
-	}
-
-	@Override
-	public List<String> complete(String[] args, int offset) {
-		return this.next.complete(args, offset);
 	}
 
 	@Override

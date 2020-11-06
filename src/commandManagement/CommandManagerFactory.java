@@ -1,26 +1,24 @@
 package commandManagement;
 
+import converter.Converter;
+import converter.defaults.BooleanConverter;
+import converter.defaults.DoubleConverter;
+import converter.defaults.IntegerConverter;
+import converter.defaults.StringConverter;
+import handler.builder.BaseCommandBuilder;
+import handler.builder.MethodBuilder;
+import handler.builder.SubCommandBuilder;
+import handler.command.BaseCommand;
+import handler.command.CommandHandler;
+import handler.method.MethodParameter;
+import org.apache.commons.lang.ClassUtils;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
-
-import org.apache.commons.lang.ClassUtils;
-
-import converter.Converter;
-import converter.defaults.BooleanConverter;
-import converter.defaults.DoubleConverter;
-import converter.defaults.IntegerConverter;
-import converter.defaults.StringConverter;
-import handler.BaseCommand;
-import handler.CommandHandler;
-import handler.SubCommand;
-import handler.builder.BaseCommandBuilder;
-import handler.builder.MethodBuilder;
-import handler.builder.SubCommandBuilder;
-import handler.method.MethodParameter;
 
 public abstract class CommandManagerFactory {
 	private static Map<Class, Class<Converter>> defaultArgumentClasses;
@@ -48,8 +46,8 @@ public abstract class CommandManagerFactory {
 	}
 
 	private static BaseCommand loadBaseClass(Class<?> clazz, SubCommandBuilder subBuilder,
-			BaseCommandBuilder baseBuilder, MethodBuilder methodBuilder,
-			List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
+											 BaseCommandBuilder baseBuilder, MethodBuilder methodBuilder,
+											 List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
 		CommandClass comm = clazz.<CommandClass>getAnnotation(CommandClass.class);
 
 		if (comm == null) {
@@ -70,7 +68,7 @@ public abstract class CommandManagerFactory {
 	}
 
 	private static void loadSubClass(Class<?> clazz, CommandHandler parent, SubCommandBuilder subBuilder,
-			MethodBuilder methodBuilder, List<Class<? extends Converter<?>>> standardConverter)
+									 MethodBuilder methodBuilder, List<Class<? extends Converter<?>>> standardConverter)
 			throws CommandManagerLoadingException {
 		CommandClass anno = clazz.<CommandClass>getAnnotation(CommandClass.class);
 
@@ -78,7 +76,7 @@ public abstract class CommandManagerFactory {
 			return;
 		}
 
-		SubCommand handler = subBuilder.build(clazz, anno);
+		CommandHandler handler = subBuilder.build(clazz, anno);
 		parent.addCommand(handler);
 
 		for (Class c : getChildCommands(clazz, anno)) {
@@ -99,7 +97,7 @@ public abstract class CommandManagerFactory {
 	}
 
 	private static void loadMethod(Method meth, CommandHandler parent, MethodBuilder methodBuilder,
-			List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
+								   List<Class<? extends Converter<?>>> standardConverter) throws CommandManagerLoadingException {
 
 		CommandMehtod anno = meth.<CommandMehtod>getAnnotation(CommandMehtod.class);
 

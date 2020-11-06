@@ -1,28 +1,22 @@
 package handler.builder;
 
+import commandManagement.CommandManagerFactory.CommandMehtod;
+import commandManagement.CommandManagerFactory.UseConverter;
+import commandManagement.CommandManagerLoadingException;
+import converter.Converter;
+import handler.method.*;
+import org.apache.commons.lang.ClassUtils;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.apache.commons.lang.ClassUtils;
-
-import commandManagement.CommandManagerFactory.CommandMehtod;
-import commandManagement.CommandManagerFactory.UseConverter;
-import commandManagement.CommandManagerLoadingException;
-import converter.Converter;
-import handler.method.ChainMehtodParameter;
-import handler.method.EnvironmentMethodParameter;
-import handler.method.InvokerEndMehtodParameter;
-import handler.method.MethodParameter;
-import handler.method.MethodChainElement;
-import handler.method.VarMethodParameter;
-
 public class MethodBuilder {
 	public MethodParameter build(Method meth, CommandMehtod anno, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
-		MethodChainElement prev = null;
-		MethodChainElement first = null;
+		NodeMethodParameter prev = null;
+		NodeMethodParameter first = null;
 
 		int i = 0;
 
@@ -34,7 +28,7 @@ public class MethodBuilder {
 
 		for (; i < meth.getParameterTypes().length; i++) {
 
-			MethodChainElement curr = loadParameter(meth, i, defaultConverter);
+			NodeMethodParameter curr = loadParameter(meth, i, defaultConverter);
 			if (prev != null) {
 				prev.setNext(curr);
 			} else {
@@ -56,14 +50,14 @@ public class MethodBuilder {
 		}
 	}
 
-	private MethodChainElement loadEnvironmentParameter(Method meth) throws CommandManagerLoadingException {
+	private NodeMethodParameter loadEnvironmentParameter(Method meth) throws CommandManagerLoadingException {
 		if (meth.getParameters().length < 1) {
 			throw new CommandManagerLoadingException("mehtod needs atleast 1 parameter to use Special Annotation");
 		}
 		return new EnvironmentMethodParameter(meth.getParameters()[0]);
 	}
 
-	private MethodChainElement loadParameter(Method m, int i, List<Class<? extends Converter<?>>> defaultConverter)
+	private NodeMethodParameter loadParameter(Method m, int i, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
 		Class<?> param = null;
 		if (m.getParameters()[i].isVarArgs()) {
@@ -120,7 +114,7 @@ public class MethodBuilder {
 		if (m.getParameters()[i].isVarArgs()) {
 			return new VarMethodParameter(conv, param);
 		} else {
-			return new ChainMehtodParameter(conv);
+			return new StandardMehtodParameter(conv);
 		}
 	}
 }

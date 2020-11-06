@@ -1,14 +1,13 @@
 package handler.method;
 
+import commandManagement.executable.InvokerExecutable;
 import commandManagement.result.method.MethodResult;
 import commandManagement.result.method.MethodSuccesResult;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 import java.util.List;
 
-public class InvokerEndMehtodParameter extends MethodParameter {
+public class InvokerEndMehtodParameter extends EndMethodParameter {
 	private Method methode;
 
 	public InvokerEndMehtodParameter(Method methode) {
@@ -16,28 +15,20 @@ public class InvokerEndMehtodParameter extends MethodParameter {
 	}
 
 	@Override
-	public MethodResult command(String[] args, int offset, List<Object> list, Object t) {
+	public MethodResult search(String[] args, int offset, List<Object> list, Object t) {
 
 		if (offset != args.length) {
 			return null;
 		}
 
-		try {
-			Object[] arr = list.toArray();
-			this.methode.invoke(null, arr);
-			return new MethodSuccesResult(this);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	@Override
-	public List<String> complete(String[] args, int offset) {
-
-		List<String> ret = new LinkedList<>();
-		return ret;
-
+//		try {
+		Object[] arr = list.toArray();
+// 			this.methode.invoke(null, arr);
+		return new MethodSuccesResult(this, new InvokerExecutable(arr, this.methode));
+//		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+//			e.printStackTrace();
+//			return null;
+//		}
 	}
 
 	@Override

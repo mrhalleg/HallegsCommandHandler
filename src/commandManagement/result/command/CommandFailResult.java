@@ -1,8 +1,11 @@
 package commandManagement.result.command;
 
-import handler.CommandHandler;
+import commandManagement.result.FailResult;
+import handler.command.CommandHandler;
 
-public class CommandFailResult extends CommandResult {
+import java.util.List;
+
+public class CommandFailResult extends FailResult {
 	protected CommandHandler command;
 
 	public CommandFailResult(CommandHandler commandHandler) {
@@ -10,9 +13,12 @@ public class CommandFailResult extends CommandResult {
 	}
 
 	@Override
+	public List<String> suggest() {
+		return null;
+	}
+
+	@Override
 	public String toString() {
-		return "CommandFailResult{" +
-				"command=" + this.command +
-				'}';
+		return super.toString() + this.command;
 	}
 }

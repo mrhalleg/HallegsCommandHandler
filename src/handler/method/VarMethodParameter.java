@@ -4,16 +4,16 @@ import commandManagement.result.method.MethodResult;
 import converter.Converter;
 
 import java.lang.reflect.Array;
-import java.util.LinkedList;
 import java.util.List;
 
-public class VarMethodParameter extends MethodChainElement {
+public class VarMethodParameter extends NodeMethodParameter {
 
 	private Converter<?> converter;
 	private Class<?> type;
 	private MethodParameter next;
 
 	public VarMethodParameter(Converter<?> converter, Class<?> type) {
+		super();
 		this.converter = converter;
 		this.type = type;
 	}
@@ -23,10 +23,12 @@ public class VarMethodParameter extends MethodChainElement {
 		this.next = next;
 	}
 
-	public MethodResult command(String[] args, int offset, List<Object> list, Object special, Object[] conv) {
+	public MethodResult search(String[] args, int offset, List<Object> list, Object special, Object[] conv) {
 		if (offset == args.length) {
 			list.add(conv);
-			return this.next.command(args, offset, list, special);
+			MethodResult ret = this.next.search(args, offset, list, special);
+			ret.addPath(this);
+			return ret;
 		}
 
 		Object ret = this.converter.convert(args[offset]);
@@ -35,32 +37,15 @@ public class VarMethodParameter extends MethodChainElement {
 		}
 
 		conv[offset - (args.length - conv.length)] = ret;
-		return command(args, offset + 1, list, special, conv);
+		return search(args, offset + 1, list, special, conv);
 	}
 
 	@Override
-	public MethodResult command(String[] args, int offset, List<Object> list, Object environment) {
+	public MethodResult search(String[] args, int offset, List<Object> list, Object environment) {
 		Object[] arr = (Object[]) Array.newInstance(this.type, args.length - offset);
-		return command(args, offset, list, environment, arr);
+		return search(args, offset, list, environment, arr);
 	}
 
-	@Override
-	public List<String> complete(String[] args, int offset) {
-
-		List<String> ret = new LinkedList<>();
-
-		if (offset == args.length) {
-			ret.addAll(this.converter.complete());
-			return ret;
-		}
-
-		if (this.converter.convert(args[offset]) == null) {
-			return ret;
-		}
-
-		ret.addAll(complete(args, offset + 1));
-		return ret;
-	}
 
 	@Override
 	public String printTree(String pre, String params) {

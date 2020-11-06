@@ -4,14 +4,13 @@ import commandManagement.result.method.MethodFailResult;
 import commandManagement.result.method.MethodResult;
 import converter.Converter;
 
-import java.util.LinkedList;
 import java.util.List;
 
-public class ChainMehtodParameter extends MethodChainElement {
+public class StandardMehtodParameter extends NodeMethodParameter {
 	private Converter<?> converter;
 	private MethodParameter next;
 
-	public ChainMehtodParameter(Converter<?> converter) {
+	public StandardMehtodParameter(Converter<?> converter) {
 		this.converter = converter;
 	}
 
@@ -21,7 +20,7 @@ public class ChainMehtodParameter extends MethodChainElement {
 	}
 
 	@Override
-	public MethodResult command(String[] args, int offset, List<Object> list, Object environment) {
+	public MethodResult search(String[] args, int offset, List<Object> list, Object environment) {
 		if (offset == args.length) {
 			return null;
 		}
@@ -31,29 +30,12 @@ public class ChainMehtodParameter extends MethodChainElement {
 		}
 
 		list.add(ret);
-		MethodResult result = this.next.command(args, offset + 1, list, environment);
+		MethodResult result = this.next.search(args, offset + 1, list, environment);
 		if (result != null) {
+			result.addPath(this);
 			return result;
 		}
 		return new MethodFailResult(this);
-	}
-
-	@Override
-	public List<String> complete(String[] args, int offset) {
-
-		List<String> ret = new LinkedList<>();
-
-		if (offset == args.length) {
-			ret.addAll(this.converter.complete());
-			return ret;
-		}
-
-		if (this.converter.convert(args[offset]) == null) {
-			return ret;
-		}
-
-		ret.addAll(this.next.complete(args, offset + 1));
-		return ret;
 	}
 
 	@Override
@@ -68,8 +50,6 @@ public class ChainMehtodParameter extends MethodChainElement {
 
 	@Override
 	public String toString() {
-		return "ChainMehtodParameter{" +
-				"converter=" + this.converter.getClass().getTypeName() +
-				'}';
+		return this.converter.getClass().getName();
 	}
 }

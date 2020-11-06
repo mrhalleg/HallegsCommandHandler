@@ -1,7 +1,7 @@
 package commandManagement;
 
-import commandManagement.result.command.CommandResult;
-import handler.BaseCommand;
+import commandManagement.result.Result;
+import handler.command.BaseCommand;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ public class CommandManager {
 		this.bases = bases;
 	}
 
-	public CommandResult command(String command, Object o) {
+	public Result search(String command, Object o) {
 		for (BaseCommand b : this.bases) {
-			CommandResult res = b.command(command, o);
+			Result res = b.search(command, o);
 			if (res != null) {
 				return res;
 			}

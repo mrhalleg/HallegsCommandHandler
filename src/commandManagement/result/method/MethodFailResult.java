@@ -1,8 +1,9 @@
 package commandManagement.result.method;
 
+import commandManagement.result.PathResult;
 import handler.method.MethodParameter;
 
-public class MethodFailResult extends MethodResult {
+public class MethodFailResult extends PathResult implements MethodResult {
 	protected MethodParameter parameter;
 
 	public MethodFailResult(MethodParameter methodParameter) {
@@ -10,12 +11,7 @@ public class MethodFailResult extends MethodResult {
 	}
 
 	@Override
-	public boolean isSucces() {
-		return false;
-	}
-
-	@Override
 	public String toString() {
-		return this.parameter.toString();
+		return joinNodes(" ") + this.parameter.toString();
 	}
 }

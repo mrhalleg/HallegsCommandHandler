@@ -1,5 +1,7 @@
 package commandManagement.result.method;
 
-public abstract class MethodResult {
-	public abstract boolean isSucces();
+import handler.CommandTreeNode;
+
+public interface MethodResult {
+	public void addPath(CommandTreeNode node);
 }
