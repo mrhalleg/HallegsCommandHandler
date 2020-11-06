@@ -7,19 +7,19 @@ import java.util.List;
 
 import org.apache.commons.lang.ClassUtils;
 
-import commandManagement.CommandManager.CommandMehtod;
-import commandManagement.CommandManager.UseConverter;
+import commandManagement.CommandManagerFactory.CommandMehtod;
+import commandManagement.CommandManagerFactory.UseConverter;
 import commandManagement.CommandManagerLoadingException;
 import converter.Converter;
-import handler.mehtod.ChainMehtodParameter;
-import handler.mehtod.EnvironmentMethodParameter;
-import handler.mehtod.InvokerEndMehtodParameter;
-import handler.mehtod.MehtodParameter;
-import handler.mehtod.MethodChainElement;
-import handler.mehtod.VarMethodParameter;
+import handler.method.ChainMehtodParameter;
+import handler.method.EnvironmentMethodParameter;
+import handler.method.InvokerEndMehtodParameter;
+import handler.method.MethodParameter;
+import handler.method.MethodChainElement;
+import handler.method.VarMethodParameter;
 
 public class MethodBuilder {
-	public MehtodParameter build(Method meth, CommandMehtod anno, List<Class<? extends Converter<?>>> defaultConverter)
+	public MethodParameter build(Method meth, CommandMehtod anno, List<Class<? extends Converter<?>>> defaultConverter)
 			throws CommandManagerLoadingException {
 		MethodChainElement prev = null;
 		MethodChainElement first = null;

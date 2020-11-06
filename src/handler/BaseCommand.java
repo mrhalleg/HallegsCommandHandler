@@ -1,37 +1,33 @@
 package handler;
 
+import commandManagement.CommandManagerFactory.CommandClass;
+import commandManagement.result.command.CommandResult;
+
 import java.util.List;
 
-import commandManagement.CommandManager.CommandClass;
-
-/**
- * Manages one base command. e.g. every user input beginning with "/test". one
- * command has one or more CommandMethods (which are managed by a
- * {@link #CommandMethodHandler}). Represents a Root int the Command .
- */
 public class BaseCommand {
 
 	protected SubCommand command;
 
 	public BaseCommand(Class<?> clazz, CommandClass comm) {
-		command = new SubCommand(clazz, comm);
+		this.command = new SubCommand(clazz, comm);
 	}
 
 	public void printTree() {
-		System.out.println(command.printTree("", true));
+		System.out.println(this.command.printTree("", true));
 	}
 
-	public String command(String string, Object environment) {
+	public CommandResult command(String string, Object environment) {
 		String[] arr = string.split(" ");
-		return command.command(arr, 0, environment);
+		return this.command.command(arr, 0, environment);
 	}
 
 	public List<String> complete(String string) {
 		String[] arr = string.split(" ");
-		return command.complete(arr, 0);
+		return this.command.complete(arr, 0);
 	}
 
 	public CommandHandler getCommand() {
-		return command;
+		return this.command;
 	}
 }

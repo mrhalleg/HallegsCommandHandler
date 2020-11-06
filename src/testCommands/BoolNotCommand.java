@@ -1,7 +1,7 @@
 package testCommands;
 
-import commandManagement.CommandManager.CommandClass;
-import commandManagement.CommandManager.CommandMehtod;
+import commandManagement.CommandManagerFactory.CommandClass;
+import commandManagement.CommandManagerFactory.CommandMehtod;
 
 @CommandClass(name = "not")
 public class BoolNotCommand {

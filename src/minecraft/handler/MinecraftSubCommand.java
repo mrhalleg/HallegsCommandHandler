@@ -1,6 +1,6 @@
 package minecraft.handler;
 
-import commandManagement.CommandManager.CommandClass;
+import commandManagement.CommandManagerFactory.CommandClass;
 import handler.SubCommand;
 
 /**

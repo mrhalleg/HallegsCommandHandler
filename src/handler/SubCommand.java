@@ -1,6 +1,6 @@
 package handler;
 
-import commandManagement.CommandManager.CommandClass;
+import commandManagement.CommandManagerFactory.CommandClass;
 
 /**
  * Manages

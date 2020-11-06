@@ -1,7 +1,7 @@
 package testCommands;
 
-import commandManagement.CommandManager.CommandClass;
-import commandManagement.CommandManager.CommandMehtod;
+import commandManagement.CommandManagerFactory.CommandClass;
+import commandManagement.CommandManagerFactory.CommandMehtod;
 import converter.defaults.IntegerConverter.IntMin;
 
 @CommandClass(name = "bool", alias = { "boolean" }, children = { BoolNotCommand.class })

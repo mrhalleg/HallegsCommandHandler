@@ -1,6 +1,6 @@
 package minecraft.builder;
 
-import commandManagement.CommandManager.CommandClass;
+import commandManagement.CommandManagerFactory.CommandClass;
 import handler.BaseCommand;
 import handler.builder.BaseCommandBuilder;
 import minecraft.handler.MinecraftBaseCommand;

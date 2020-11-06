@@ -1,14 +1,21 @@
 package handler;
 
+import commandManagement.CommandManagerFactory.CommandClass;
+import commandManagement.result.command.CommandFailResult;
+import commandManagement.result.command.CommandMehtodFailResult;
+import commandManagement.result.command.CommandResult;
+import commandManagement.result.command.CommandSuccesResult;
+import commandManagement.result.method.MethodFailResult;
+import commandManagement.result.method.MethodResult;
+import commandManagement.result.method.MethodSuccesResult;
+import handler.method.MethodParameter;
+
 import java.util.LinkedList;
 import java.util.List;
 
-import commandManagement.CommandManager.CommandClass;
-import handler.mehtod.MehtodParameter;
-
 public abstract class CommandHandler extends CommandTreeNode {
 	protected String name;
-	protected List<MehtodParameter> methods;
+	protected List<MethodParameter> methods;
 	protected List<SubCommand> handler;
 	protected String[] alias;
 
@@ -16,40 +23,48 @@ public abstract class CommandHandler extends CommandTreeNode {
 		super();
 		this.name = anno.name();
 		this.alias = anno.alias();
-		methods = new LinkedList<>();
-		handler = new LinkedList<>();
+		this.methods = new LinkedList<>();
+		this.handler = new LinkedList<>();
 	}
 
-	public void addMethod(MehtodParameter method) {
-		methods.add(method);
+	public void addMethod(MethodParameter method) {
+		this.methods.add(method);
 	}
 
 	public void addCommand(SubCommand command) {
-		handler.add(command);
+		this.handler.add(command);
 	}
 
-	public String command(String[] args, int offset, Object environment) {
+	public CommandResult command(String[] args, int offset, Object environment) {
 		if (offset >= args.length) {
 			return null;
 		}
 
-		if (!args[offset].equals(name)) {
+		if (!isMe(args[offset])) {
 			return null;
 		}
 
 		for (SubCommand e : this.handler) {
-			String ret = e.command(args, offset + 1, environment);
+			CommandResult ret = e.command(args, offset + 1, environment);
 			if (ret != null) {
 				return ret;
 			}
 		}
 
-		for (MehtodParameter m : methods) {
-			if (m.command(args, offset + 1, environment)) {
-				return null;
+		CommandMehtodFailResult fail = new CommandMehtodFailResult();
+		for (MethodParameter m : this.methods) {
+			MethodResult ret = m.command(args, offset + 1, environment);
+			if (ret instanceof MethodSuccesResult) {
+				return new CommandSuccesResult((MethodSuccesResult) ret);
+			} else if (ret instanceof MethodFailResult) {
+				fail.add((MethodFailResult) ret);
 			}
 		}
-		return printTree("", true);
+		if (!fail.isEmpty()) {
+			return fail;
+		}
+
+		return new CommandFailResult(this);
 	}
 
 	public List<String> complete(String[] args, int offset) {
@@ -60,7 +75,7 @@ public abstract class CommandHandler extends CommandTreeNode {
 			return ret;
 		}
 
-		if (!args[offset].equals(name)) {
+		if (!isMe(args[offset])) {
 			return ret;
 		}
 
@@ -68,27 +83,50 @@ public abstract class CommandHandler extends CommandTreeNode {
 			ret.addAll(e.complete(args, offset + 1));
 		}
 
-		for (MehtodParameter e : this.methods) {
+		for (MethodParameter e : this.methods) {
 			ret.addAll(e.complete(args, offset + 1));
 		}
 		return ret;
 	}
 
+	protected boolean isMe(String str) {
+		if (this.name.equals(str)) {
+			return true;
+		}
+
+		for (String a : this.alias) {
+			if (a.equals(str)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public String printTree(String pre, boolean last) {
 
-		String out = "\n" + pre + "+- " + name + " [" + String.join(" ", alias) + "]";
+		String out = "\n" + pre + "+- " + toString();
 		if (last) {
 			pre = pre + "   ";
 		} else {
 			pre = pre + "|  ";
 		}
-		for (int i = 0; i < handler.size(); i++) {
-			out += handler.get(i).printTree(pre, (i >= handler.size() - 1 && methods.isEmpty()));
+		for (int i = 0; i < this.handler.size(); i++) {
+			out += this.handler.get(i).printTree(pre, (i >= this.handler.size() - 1 && this.methods.isEmpty()));
 		}
 
-		for (int i = 0; i < methods.size(); i++) {
-			out += methods.get(i).printTree(pre);
+		for (int i = 0; i < this.methods.size(); i++) {
+			out += this.methods.get(i).printTree(pre);
 		}
 		return out;
+	}
+
+	@Override
+	public String toString() {
+		return this.name + " [" + String.join(" ", this.alias) + "]";
+	}
+
+	public String getName() {
+		return this.name;
 	}
 }
